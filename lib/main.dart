@@ -6,6 +6,7 @@ import 'logic/ad_manager.dart';
 import 'widgets/play_area.dart';
 import 'widgets/inventory_bar.dart';
 import 'widgets/progress_header.dart';
+import 'widgets/new_discovery_overlay.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +44,9 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.select<GameController, bool>((c) => c.isLoading);
+    final controller = context.watch<GameController>();
+    final isLoading = controller.isLoading;
+    final lastDiscovered = controller.lastDiscoveredEmoji;
 
     if (isLoading) {
       return const Scaffold(
@@ -53,14 +56,38 @@ class GameScreen extends StatelessWidget {
       );
     }
 
-    return const Scaffold(
-      body: Column(
+    return Scaffold(
+      body: Stack(
         children: [
-          ProgressHeader(),
-          Expanded(
-            child: PlayArea(),
+          // Background Glow
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.topCenter,
+                  radius: 1.2,
+                  colors: [
+                    Colors.purple.withOpacity(0.1),
+                    Colors.black,
+                  ],
+                ),
+              ),
+            ),
           ),
-          InventoryBar(),
+          Column(
+            children: [
+              const ProgressHeader(),
+              const Expanded(
+                child: PlayArea(),
+              ),
+              const InventoryBar(),
+            ],
+          ),
+          if (lastDiscovered != null)
+            NewDiscoveryOverlay(
+              emoji: lastDiscovered,
+              onDismiss: () => controller.clearLastDiscovered(),
+            ),
         ],
       ),
     );

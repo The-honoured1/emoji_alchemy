@@ -17,32 +17,44 @@ class EmojiWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget content = Container(
-      width: 60,
-      height: 60,
+      width: 64,
+      height: 64,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.15),
+            Colors.white.withOpacity(0.05),
+          ],
+        ),
         shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
+            color: Colors.purple.withOpacity(0.2),
+            blurRadius: 15,
+            spreadRadius: 1,
           ),
         ],
       ),
       child: Center(
         child: Text(
           item.emoji,
-          style: const TextStyle(fontSize: 32),
+          style: const TextStyle(fontSize: 34),
         ),
       ),
     )
         .animate()
         .scale(
-          duration: 300.ms,
+          duration: 400.ms,
           curve: Curves.elasticOut,
+          begin: const Offset(0.5, 0.5),
         )
-        .fadeIn();
+        .fadeIn(duration: 200.ms);
 
     if (!isDraggable) return content;
 

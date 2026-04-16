@@ -9,10 +9,19 @@ class GameController extends ChangeNotifier {
   Set<String> _discoveredEmojis = {};
   List<EmojiItem> _canvasEmojis = [];
   bool _isLoading = true;
+  String _selectedCategory = "All";
+  String? _lastDiscoveredEmoji;
 
   Set<String> get discoveredEmojis => _discoveredEmojis;
   List<EmojiItem> get canvasEmojis => _canvasEmojis;
   bool get isLoading => _isLoading;
+  String get selectedCategory => _selectedCategory;
+  String? get lastDiscoveredEmoji => _lastDiscoveredEmoji;
+
+  List<String> get filteredInventory {
+    if (_selectedCategory == "All") return _discoveredEmojis.toList()..sort();
+    return _discoveredEmojis.where((e) => RecipeManager.getEmojiCategory(e) == _selectedCategory).toList()..sort();
+  }
 
   int get totalPossible => RecipeManager.recipes.values.toSet().length + RecipeManager.getStartingEmojis().length;
 
@@ -61,20 +70,24 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? checkCollision(EmojiItem dragged) {
+  bool checkCollision(EmojiItem dragged) {
     for (var other in _canvasEmojis) {
       if (other.id == dragged.id) continue;
 
       final distance = (dragged.position - other.position).distance;
-      if (distance < 50) { // Collision threshold
+      if (distance < 60) { // Collision threshold
         final result = RecipeManager.combine(dragged.emoji, other.emoji);
         if (result != null) {
           _handleMerge(dragged, other, result);
-          return result;
+          return true;
+        } else {
+          // Subtle shake feedback for invalid combination
+          _vibrate(intensity: 30);
+          return false;
         }
       }
     }
-    return null;
+    return false;
   }
 
   void _handleMerge(EmojiItem e1, EmojiItem e2, String result) {
@@ -88,10 +101,21 @@ class GameController extends ChangeNotifier {
       _discoveredEmojis.add(result);
       _save();
       _vibrate(intensity: 100);
-      AdManager.showDiscoveryAd(); // Show ad every few discoveries
+      _lastDiscoveredEmoji = result; // Trigger UI event
+      AdManager.showDiscoveryAd(); 
     } else {
       _vibrate(intensity: 50);
     }
+    notifyListeners();
+  }
+
+  void setCategory(String category) {
+    _selectedCategory = category;
+    notifyListeners();
+  }
+
+  void clearLastDiscovered() {
+    _lastDiscoveredEmoji = null;
     notifyListeners();
   }
 
