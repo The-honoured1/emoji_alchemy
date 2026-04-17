@@ -22,10 +22,14 @@ class AdManager {
   }
 
   static void _loadInterstitial() {
+    final adUnitId = Platform.isAndroid
+        ? 'ca-app-pub-3940256099942544/1033173712'
+        : 'ca-app-pub-3940256099942544/4411468910';
+
     InterstitialAd.load(
-      adUnitId: InterstitialAd.testAdUnitId, // Use test ID for now
+      adUnitId: adUnitId,
       request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
+      interstitialAdLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           _interstitialAd = ad;
           _interstitialAd?.show();
@@ -39,10 +43,14 @@ class AdManager {
 
   // Rewarded Ad for Hints
   static void showRewardedAd(Function onReward) {
+    final adUnitId = Platform.isAndroid
+        ? 'ca-app-pub-3940256099942544/5224354917'
+        : 'ca-app-pub-3940256099942544/1712485313';
+
     RewardedAd.load(
-      adUnitId: RewardedAd.testAdUnitId,
+      adUnitId: adUnitId,
       request: const AdRequest(),
-      adLoadCallback: RewardedAdLoadCallback(
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
           ad.show(onUserEarnedReward: (ad, reward) {
             onReward();
