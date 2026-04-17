@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../logic/game_controller.dart';
 import '../logic/ad_manager.dart';
+import '../logic/recipe_manager.dart';
 
 class ProgressHeader extends StatelessWidget {
   const ProgressHeader({Key? key}) : super(key: key);

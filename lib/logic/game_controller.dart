@@ -16,6 +16,8 @@ class GameController extends ChangeNotifier {
   String? _lastDiscoveredEmoji;
   String? _selectedInventoryEmoji;
   bool _vibrationEnabled = true;
+  GameMode _currentMode = GameMode.sandbox;
+  String? _challengeTarget;
 
   Set<String> get discoveredEmojis => _discoveredEmojis;
   List<EmojiItem> get canvasEmojis => _canvasEmojis;
