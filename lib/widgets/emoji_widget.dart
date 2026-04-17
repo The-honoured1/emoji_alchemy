@@ -17,34 +17,19 @@ class EmojiWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget content = Container(
-      width: 64,
-      height: 64,
+      width: 68,
+      height: 72, // Slightly taller for the 3D bottom border
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.15),
-            Colors.white.withOpacity(0.05),
-          ],
+        color: const Color(0xFF23232D),
+        borderRadius: BorderRadius.circular(16),
+        border: const Border(
+          bottom: BorderSide(color: Color(0xFF121217), width: 6),
         ),
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.purple.withOpacity(0.2),
-            blurRadius: 15,
-            spreadRadius: 1,
-          ),
-        ],
       ),
       child: Center(
         child: Text(
           item.emoji,
-          style: const TextStyle(fontSize: 34),
+          style: const TextStyle(fontSize: 40),
         ),
       ),
     )

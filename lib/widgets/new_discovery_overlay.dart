@@ -15,27 +15,23 @@ class NewDiscoveryOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.black54,
+      color: Colors.black.withOpacity(0.9),
       child: Center(
         child: Container(
           margin: const EdgeInsets.all(40),
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A22),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white10, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                blurRadius: 20,
-              ),
-            ],
+            color: const Color(0xFF23232D),
+            borderRadius: BorderRadius.circular(32),
+            border: const Border(
+              bottom: BorderSide(color: Color(0xFF121217), width: 8),
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "NEW DISCOVERY!",
+                "NEW DISCOVERY",
                 style: GoogleFonts.outfit(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
@@ -43,13 +39,14 @@ class NewDiscoveryOverlay extends StatelessWidget {
                   letterSpacing: 2,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               Container(
-                width: 120,
-                height: 120,
+                width: 140,
+                height: 140,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  shape: BoxShape.circle,
+                  color: const Color(0xFF16161C),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white10),
                 ),
                 child: Center(
                   child: Text(
@@ -57,41 +54,46 @@ class NewDiscoveryOverlay extends StatelessWidget {
                     style: const TextStyle(fontSize: 80),
                   ),
                 ),
-              )
-                  .animate()
-                  .scale(duration: 600.ms, curve: Curves.elasticOut)
-                  .shimmer(delay: 400.ms, duration: 1.seconds),
-              const SizedBox(height: 24),
+              ).animate().scale(duration: 400.ms, curve: Curves.elasticOut),
+              const SizedBox(height: 32),
               Text(
-                "You've unlocked a new element of the universe.",
+                "YOU'VE UNLOCKED A NEW ELEMENT",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
-                  color: Colors.white70,
-                  fontSize: 16,
+                  color: Colors.white38,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
               const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: onDismiss,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purpleAccent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+              GestureDetector(
+                onTap: onDismiss,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.purpleAccent,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border(
+                      bottom: BorderSide(color: Colors.purple.shade900, width: 6),
+                    ),
                   ),
-                ),
-                child: Text(
-                  "AWESOME!",
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                  child: Center(
+                    child: Text(
+                      "CONTINUE",
+                      style: GoogleFonts.outfit(
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        fontSize: 18,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-        )
-            .animate()
-            .scale(duration: 400.ms, curve: Curves.easeOutBack)
-            .fadeIn(duration: 200.ms),
+        ),
       ),
     );
   }

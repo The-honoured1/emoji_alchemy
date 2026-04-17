@@ -65,13 +65,19 @@ class GameScreen extends StatelessWidget {
               color: const Color(0xFF0F0F12),
             ),
           ),
-          Column(
+          Row(
             children: [
-              const ProgressHeader(),
-              const Expanded(
-                child: PlayArea(),
+              const InventorySidebar(),
+              Expanded(
+                child: Column(
+                  children: [
+                    const ProgressHeader(),
+                    const Expanded(
+                      child: PlayArea(),
+                    ),
+                  ],
+                ),
               ),
-              const InventoryBar(),
             ],
           ),
           if (lastDiscovered != null)
