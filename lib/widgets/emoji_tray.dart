@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,7 +6,9 @@ import '../logic/game_controller.dart';
 import '../logic/recipe_manager.dart';
 
 class EmojiTray extends StatefulWidget {
-  const EmojiTray({Key? key}) : super(key: key);
+  final double maxHeight;
+
+  const EmojiTray({Key? key, this.maxHeight = 434}) : super(key: key);
 
   @override
   State<EmojiTray> createState() => _EmojiTrayState();
@@ -52,6 +55,26 @@ class _EmojiTrayState extends State<EmojiTray>
     final controller = context.watch<GameController>();
     final categories = ['All', ...RecipeManager.categories.keys];
     final discovered = controller.filteredInventory;
+    const peekBarHeight = 64.0;
+    const preferredExpandedHeight = 370.0;
+    const minExpandedHeight = 170.0;
+    final availableForExpanded = math.max(
+      0.0,
+      widget.maxHeight - peekBarHeight,
+    );
+    final expandedHeight = math.min(
+      preferredExpandedHeight,
+      availableForExpanded,
+    );
+    final canExpand = expandedHeight >= minExpandedHeight;
+
+    if (!canExpand && _expanded) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_expanded) return;
+        setState(() => _expanded = false);
+        _animController.reverse();
+      });
+    }
 
     return Container(
       decoration: const BoxDecoration(
@@ -63,8 +86,9 @@ class _EmojiTrayState extends State<EmojiTray>
         children: [
           // ── Peek bar (always visible) ──────────────────────
           GestureDetector(
-            onTap: _toggle,
+            onTap: canExpand ? _toggle : null,
             onVerticalDragUpdate: (d) {
+              if (!canExpand) return;
               if (d.delta.dy < -6 && !_expanded) _toggle();
               if (d.delta.dy > 6 && _expanded) _toggle();
             },
@@ -74,11 +98,11 @@ class _EmojiTrayState extends State<EmojiTray>
               child: Row(
                 children: [
                   AnimatedRotation(
-                    turns: _expanded ? 0.5 : 0.0,
+                    turns: canExpand && _expanded ? 0.5 : 0.0,
                     duration: const Duration(milliseconds: 300),
-                    child: const Icon(
+                    child: Icon(
                       Icons.keyboard_arrow_up_rounded,
-                      color: Colors.white38,
+                      color: canExpand ? Colors.white38 : Colors.white12,
                       size: 22,
                     ),
                   ),
@@ -88,7 +112,9 @@ class _EmojiTrayState extends State<EmojiTray>
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.06),
                       borderRadius: BorderRadius.circular(12),
@@ -108,17 +134,18 @@ class _EmojiTrayState extends State<EmojiTray>
           ),
 
           // ── Slide-up grid ──────────────────────────────────
-          SizeTransition(
-            sizeFactor: _sizeFactor,
-            child: SizedBox(
-              height: 370,
-              child: _TrayGrid(
-                controller: controller,
-                categories: categories,
-                discovered: discovered,
+          if (canExpand)
+            SizeTransition(
+              sizeFactor: _sizeFactor,
+              child: SizedBox(
+                height: expandedHeight,
+                child: _TrayGrid(
+                  controller: controller,
+                  categories: categories,
+                  discovered: discovered,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -146,8 +173,7 @@ class _PeekEmojis extends StatelessWidget {
                   child: Text(emoji, style: const TextStyle(fontSize: 42)),
                 ),
                 child: GestureDetector(
-                  onTap: () =>
-                      controller.addEmojiToCanvas(emoji, const Offset(160, 260)),
+                  onTap: () => controller.addEmojiFromTray(emoji),
                   child: Text(emoji, style: const TextStyle(fontSize: 28)),
                 ),
               ),
@@ -191,10 +217,11 @@ class _TrayGrid extends StatelessWidget {
                 hintText: 'Search elements...',
                 hintStyle: TextStyle(color: Colors.white24),
                 border: InputBorder.none,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                prefixIcon:
-                    Icon(Icons.search, color: Colors.white24, size: 18),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                prefixIcon: Icon(Icons.search, color: Colors.white24, size: 18),
               ),
             ),
           ),
@@ -217,7 +244,9 @@ class _TrayGrid extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 6),
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: selected
                           ? Colors.purpleAccent
@@ -228,7 +257,7 @@ class _TrayGrid extends StatelessWidget {
                               BoxShadow(
                                 color: Colors.purpleAccent.withOpacity(0.3),
                                 blurRadius: 8,
-                              )
+                              ),
                             ]
                           : [],
                     ),
@@ -273,20 +302,17 @@ class _TrayGrid extends StatelessWidget {
                   ),
                 ),
                 child: GestureDetector(
-                  onTap: () => controller.addEmojiToCanvas(
-                      emoji, const Offset(160, 260)),
+                  onTap: () => controller.addEmojiFromTray(emoji),
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFF1E1E2A),
                       borderRadius: BorderRadius.circular(10),
                       border: const Border(
-                        bottom:
-                            BorderSide(color: Color(0xFF0A0A10), width: 2),
+                        bottom: BorderSide(color: Color(0xFF0A0A10), width: 2),
                       ),
                     ),
                     child: Center(
-                      child: Text(emoji,
-                          style: const TextStyle(fontSize: 20)),
+                      child: Text(emoji, style: const TextStyle(fontSize: 20)),
                     ),
                   ),
                 ),

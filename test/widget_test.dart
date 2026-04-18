@@ -5,8 +5,11 @@ import 'package:emoji_alchemy/logic/recipe_manager.dart';
 void main() {
   group('RecipeManager.combine', () {
     test('builds a large exact recipe map', () {
-      expect(RecipeManager.allRecipes.length, greaterThanOrEqualTo(10000));
-      expect(RecipeManager.allRecipeResults.length, greaterThanOrEqualTo(120));
+      expect(RecipeManager.allRecipes.length, greaterThanOrEqualTo(50000));
+      expect(
+        RecipeManager.allRecipeResults.length,
+        greaterThanOrEqualTo(50000),
+      );
     });
 
     test('keeps existing exact recipes working', () {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
@@ -44,6 +45,8 @@ class GameController extends ChangeNotifier {
   // ─── Particle trigger ─────────────────────────────────────
   Offset? _lastMergePosition;
   int _mergeParticleTrigger = 0;
+  Size _playAreaSize = Size.zero;
+  int _traySpawnIndex = 0;
 
   // ─── Getters ──────────────────────────────────────────────
   Set<String> get discoveredEmojis => _discoveredEmojis;
@@ -255,20 +258,62 @@ class GameController extends ChangeNotifier {
   // ─── Canvas ────────────────────────────────────────────────
 
   void addEmojiToCanvas(String emoji, Offset position) {
+    final clampedPosition = _clampToPlayArea(position);
     final newItem = EmojiItem(
       emoji: emoji,
-      position: position,
+      position: clampedPosition,
       id: DateTime.now().millisecondsSinceEpoch.toString(),
     );
     _canvasEmojis.add(newItem);
     notifyListeners();
   }
 
+  void addEmojiFromTray(String emoji) {
+    final hasPlayAreaSize = _playAreaSize != Size.zero;
+    final base = hasPlayAreaSize
+        ? Offset(
+            (_playAreaSize.width / 2) - 34,
+            (_playAreaSize.height * 0.48) - 36,
+          )
+        : const Offset(160, 260);
+    const spreadPattern = <Offset>[
+      Offset(0, 0),
+      Offset(26, -22),
+      Offset(-26, -22),
+      Offset(22, 20),
+      Offset(-22, 20),
+      Offset(0, -30),
+    ];
+
+    final offset = spreadPattern[_traySpawnIndex % spreadPattern.length];
+    _traySpawnIndex++;
+    addEmojiToCanvas(emoji, base + offset);
+  }
+
+  void setPlayAreaSize(Size size) {
+    if (size == Size.zero || _playAreaSize == size) return;
+    _playAreaSize = size;
+
+    bool changed = false;
+    _canvasEmojis = _canvasEmojis.map((item) {
+      final clamped = _clampToPlayArea(item.position);
+      if (clamped != item.position) {
+        changed = true;
+        return item.copyWith(position: clamped);
+      }
+      return item;
+    }).toList();
+
+    if (changed) {
+      notifyListeners();
+    }
+  }
+
   void updateEmojiPosition(String id, Offset newPosition) {
     final index = _canvasEmojis.indexWhere((e) => e.id == id);
     if (index != -1) {
       _canvasEmojis[index] = _canvasEmojis[index].copyWith(
-        position: newPosition,
+        position: _clampToPlayArea(newPosition),
       );
       notifyListeners();
     }
@@ -281,7 +326,30 @@ class GameController extends ChangeNotifier {
 
   void clearCanvas() {
     _canvasEmojis.clear();
+    _traySpawnIndex = 0;
     notifyListeners();
+  }
+
+  Offset _clampToPlayArea(Offset position) {
+    if (_playAreaSize == Size.zero) return position;
+    const horizontalPadding = 6.0;
+    const topPadding = 6.0;
+    const emojiWidth = 68.0;
+    const emojiHeight = 72.0;
+
+    final maxX = math.max(
+      horizontalPadding,
+      _playAreaSize.width - emojiWidth - horizontalPadding,
+    );
+    final maxY = math.max(
+      topPadding,
+      _playAreaSize.height - emojiHeight - topPadding,
+    );
+
+    return Offset(
+      position.dx.clamp(horizontalPadding, maxX),
+      position.dy.clamp(topPadding, maxY),
+    );
   }
 
   // ─── Collision & merge ────────────────────────────────────

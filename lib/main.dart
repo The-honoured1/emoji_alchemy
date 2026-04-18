@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -35,9 +36,7 @@ class EmojiAlchemyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: const Color(0xFF0D0D14),
-        textTheme: GoogleFonts.outfitTextTheme(
-          ThemeData.dark().textTheme,
-        ),
+        textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
       ),
       initialRoute: '/',
       routes: {
@@ -67,45 +66,46 @@ class GameScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // ── Full-screen play area + bottom tray ────────────
-          Column(
-            children: const [
-              Expanded(child: PlayArea()),
-              EmojiTray(),
+      resizeToAvoidBottomInset: true,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final maxTrayHeight = math.max(64.0, constraints.maxHeight - 140.0);
+          return Stack(
+            children: [
+              // ── Full-screen play area + bottom tray ────────────
+              Column(
+                children: [
+                  const Expanded(child: PlayArea()),
+                  EmojiTray(maxHeight: maxTrayHeight),
+                ],
+              ),
+
+              // ── HUD overlay pinned to top ──────────────────────
+              const Positioned(top: 0, left: 0, right: 0, child: HudHeader()),
+
+              // ── Combo badge (floats over play area) ────────────
+              const ComboDisplay(),
+
+              // ── Level-up full-screen overlay ───────────────────
+              const LevelUpOverlay(),
+
+              // ── Achievement toast ──────────────────────────────
+              const AchievementOverlay(),
+
+              // ── New discovery overlay ──────────────────────────
+              if (controller.lastDiscoveredEmoji != null)
+                NewDiscoveryOverlay(
+                  emoji: controller.lastDiscoveredEmoji!,
+                  onDismiss: () => controller.clearLastDiscovered(),
+                ),
+
+              // ── Challenge time's-up overlay ────────────────────
+              if (controller.currentMode == GameMode.challenge &&
+                  controller.challengeTimedOut)
+                const _TimeUpOverlay(),
             ],
-          ),
-
-          // ── HUD overlay pinned to top ──────────────────────
-          const Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: HudHeader(),
-          ),
-
-          // ── Combo badge (floats over play area) ────────────
-          const ComboDisplay(),
-
-          // ── Level-up full-screen overlay ───────────────────
-          const LevelUpOverlay(),
-
-          // ── Achievement toast ──────────────────────────────
-          const AchievementOverlay(),
-
-          // ── New discovery overlay ──────────────────────────
-          if (controller.lastDiscoveredEmoji != null)
-            NewDiscoveryOverlay(
-              emoji: controller.lastDiscoveredEmoji!,
-              onDismiss: () => controller.clearLastDiscovered(),
-            ),
-
-          // ── Challenge time's-up overlay ────────────────────
-          if (controller.currentMode == GameMode.challenge &&
-              controller.challengeTimedOut)
-            const _TimeUpOverlay(),
-        ],
+          );
+        },
       ),
     );
   }
@@ -130,8 +130,7 @@ class _TimeUpOverlay extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF180A2E),
               borderRadius: BorderRadius.circular(32),
-              border:
-                  Border.all(color: Colors.redAccent.withOpacity(0.4)),
+              border: Border.all(color: Colors.redAccent.withOpacity(0.4)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.red.withOpacity(0.2),
@@ -159,7 +158,9 @@ class _TimeUpOverlay extends StatelessWidget {
                 // Score row
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 24, vertical: 14),
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(16),
@@ -171,13 +172,13 @@ class _TimeUpOverlay extends StatelessWidget {
                         label: 'SCORE',
                         value: '${controller.challengeScore}',
                       ),
-                      Container(
-                          width: 1, height: 40, color: Colors.white10),
+                      Container(width: 1, height: 40, color: Colors.white10),
                       _ResultStat(
                         label: 'BEST',
                         value: '${controller.challengeHighScore}',
-                        highlight: controller.challengeScore >=
-                            controller.challengeHighScore &&
+                        highlight:
+                            controller.challengeScore >=
+                                controller.challengeHighScore &&
                             controller.challengeScore > 0,
                       ),
                     ],
@@ -194,8 +195,7 @@ class _TimeUpOverlay extends StatelessWidget {
                 _BigButton(
                   label: '🏠  MAIN MENU',
                   color: const Color(0xFF252535),
-                  onTap: () =>
-                      Navigator.pushReplacementNamed(context, '/'),
+                  onTap: () => Navigator.pushReplacementNamed(context, '/'),
                 ),
               ],
             ),
@@ -256,8 +256,11 @@ class _BigButton extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
 
-  const _BigButton(
-      {required this.label, required this.color, required this.onTap});
+  const _BigButton({
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {

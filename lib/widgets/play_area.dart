@@ -27,6 +27,7 @@ class _PlayAreaState extends State<PlayArea> {
   final List<_ParticleEffect> _particles = [];
   int _lastTrigger = 0;
   late GameController _controller;
+  Size _lastReportedSize = Size.zero;
 
   @override
   void initState() {
@@ -62,91 +63,111 @@ class _PlayAreaState extends State<PlayArea> {
     super.dispose();
   }
 
+  void _reportPlayAreaSize(Size size, GameController controller) {
+    if (size == Size.zero || _lastReportedSize == size) return;
+    _lastReportedSize = size;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      controller.setPlayAreaSize(size);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<GameController>();
 
-    return DragTarget<String>(
-      onAcceptWithDetails: (details) {
-        final box = context.findRenderObject() as RenderBox;
-        final localPos = box.globalToLocal(details.offset);
-        controller.addEmojiToCanvas(details.data, localPos);
-      },
-      builder: (context, candidateData, rejectedData) {
-        return Stack(
-          children: [
-            // Background
-            Positioned.fill(
-              child: _GameBackground(hovered: candidateData.isNotEmpty),
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final playAreaSize = Size(constraints.maxWidth, constraints.maxHeight);
+        _reportPlayAreaSize(playAreaSize, controller);
+        final maxLeft = math.max(0.0, playAreaSize.width - 68);
+        final maxTop = math.max(0.0, playAreaSize.height - 72);
 
-            // Canvas emojis
-            ...controller.canvasEmojis.map((item) {
-              return Positioned(
-                left: item.position.dx,
-                top: item.position.dy,
-                child: Draggable<EmojiItem>(
-                  data: item,
-                  feedback: Material(
-                    color: Colors.transparent,
-                    child: EmojiWidget(item: item),
+        return DragTarget<String>(
+          onAcceptWithDetails: (details) {
+            final box = context.findRenderObject() as RenderBox;
+            final localPos = box.globalToLocal(details.offset);
+            controller.addEmojiToCanvas(details.data, localPos);
+          },
+          builder: (context, candidateData, rejectedData) {
+            return Stack(
+              children: [
+                // Background
+                Positioned.fill(
+                  child: _GameBackground(hovered: candidateData.isNotEmpty),
+                ),
+
+                // Canvas emojis
+                ...controller.canvasEmojis.map((item) {
+                  final boundedLeft = item.position.dx.clamp(0.0, maxLeft);
+                  final boundedTop = item.position.dy.clamp(0.0, maxTop);
+                  return Positioned(
+                    left: boundedLeft,
+                    top: boundedTop,
+                    child: Draggable<EmojiItem>(
+                      data: item,
+                      feedback: Material(
+                        color: Colors.transparent,
+                        child: EmojiWidget(item: item),
+                      ),
+                      childWhenDragging: const SizedBox.shrink(),
+                      onDragEnd: (details) {
+                        final box = context.findRenderObject() as RenderBox;
+                        final localPos = box.globalToLocal(details.offset);
+                        final clamped = Offset(
+                          localPos.dx.clamp(0.0, box.size.width - 68),
+                          localPos.dy.clamp(0.0, box.size.height - 72),
+                        );
+                        controller.updateEmojiPosition(item.id, clamped);
+                        controller.checkCollision(
+                          item.copyWith(position: clamped),
+                        );
+                      },
+                      child: EmojiWidget(item: item),
+                    ),
+                  );
+                }),
+
+                // Particle effects
+                ..._particles.map((effect) {
+                  return Positioned(
+                    left: effect.position.dx - 100,
+                    top: effect.position.dy - 100,
+                    child: IgnorePointer(
+                      child: _MergeParticleWidget(emoji: effect.emoji),
+                    ),
+                  );
+                }),
+
+                // Empty state
+                if (controller.canvasEmojis.isEmpty)
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '⚗️',
+                          style: TextStyle(
+                            fontSize: 60,
+                            color: Colors.white.withOpacity(0.10),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Drag emojis from the tray below',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.18),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w300,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  childWhenDragging: const SizedBox.shrink(),
-                  onDragEnd: (details) {
-                    final box = context.findRenderObject() as RenderBox;
-                    final localPos = box.globalToLocal(details.offset);
-                    final clamped = Offset(
-                      localPos.dx.clamp(0.0, box.size.width - 60),
-                      localPos.dy.clamp(0.0, box.size.height - 60),
-                    );
-                    controller.updateEmojiPosition(item.id, clamped);
-                    controller
-                        .checkCollision(item.copyWith(position: clamped));
-                  },
-                  child: EmojiWidget(item: item),
-                ),
-              );
-            }),
-
-            // Particle effects
-            ..._particles.map((effect) {
-              return Positioned(
-                left: effect.position.dx - 100,
-                top: effect.position.dy - 100,
-                child: IgnorePointer(
-                  child:
-                      _MergeParticleWidget(emoji: effect.emoji),
-                ),
-              );
-            }),
-
-            // Empty state
-            if (controller.canvasEmojis.isEmpty)
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '⚗️',
-                      style: TextStyle(
-                        fontSize: 60,
-                        color: Colors.white.withOpacity(0.10),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Drag emojis from the tray below',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.18),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          ],
+              ],
+            );
+          },
         );
       },
     );
@@ -216,12 +237,13 @@ class _MergeParticleWidgetState extends State<_MergeParticleWidget>
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 700),
-    )
-      ..addListener(() => setState(() {}))
-      ..forward();
+    _ctrl =
+        AnimationController(
+            vsync: this,
+            duration: const Duration(milliseconds: 700),
+          )
+          ..addListener(() => setState(() {}))
+          ..forward();
   }
 
   @override
@@ -297,8 +319,7 @@ class _ParticlePainter extends CustomPainter {
 
     // Centre flash
     if (progress < 0.25) {
-      final flashOpacity =
-          ((0.25 - progress) / 0.25).clamp(0.0, 1.0);
+      final flashOpacity = ((0.25 - progress) / 0.25).clamp(0.0, 1.0);
       canvas.drawCircle(
         center,
         65 * (progress / 0.25),
