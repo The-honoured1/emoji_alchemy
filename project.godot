@@ -11,8 +11,20 @@ config_version=5
 [application]
 
 config/name="Emoji Alchemy"
+run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+RecipeManager="*res://recipe_manager.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [physics]
 
