@@ -1,0 +1,1 @@
+ /home/chris/emoji_alchemy/.dart_tool/flutter_build/28be55814d72448b00c3193135d5c2a2/native_assets.json: 

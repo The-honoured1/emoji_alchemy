@@ -1,0 +1,1 @@
+ /home/chris/emoji_alchemy/.dart_tool/flutter_build/7ae00c9e12db3c3d25e182569bf9905c/dart_build_result.json:  /home/chris/emoji_alchemy/.dart_tool/package_config.json /home/chris/emoji_alchemy/pubspec.yaml /home/chris/flutter/bin/cache/dart-sdk/version
