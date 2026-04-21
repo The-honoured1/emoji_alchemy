@@ -25,28 +25,28 @@ func set_emoji(emoji: String, inventory: bool = false):
 
 func _setup_style():
 	var style = StyleBoxFlat.new()
-	# Improved Glassmorphism: semi-transparent white with better border and rounding
-	style.bg_color = Color(1.0, 1.0, 1.0, 0.12)
-	style.border_width_left = 3
-	style.border_width_top = 3
-	style.border_width_right = 3
-	style.border_width_bottom = 3
-	style.border_color = Color(1.0, 1.0, 1.0, 0.25)
+	# Retro Pixel Style: Flat colors, sharp corners, thick pixel borders
+	style.bg_color = Color(0.15, 0.15, 0.2, 1.0)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.4, 0.4, 0.5, 1.0)
 	
-	# More "organic" rounding
-	style.corner_radius_top_left = 28
-	style.corner_radius_top_right = 28
-	style.corner_radius_bottom_left = 20
-	style.corner_radius_bottom_right = 20
+	# SHARP corners for retro feel
+	style.corner_radius_top_left = 0
+	style.corner_radius_top_right = 0
+	style.corner_radius_bottom_left = 0
+	style.corner_radius_bottom_right = 0
 	
-	style.shadow_color = Color(0, 0, 0, 0.3)
-	style.shadow_size = 20
-	style.shadow_offset = Vector2(0, 8)
+	style.shadow_color = Color(0, 0, 0, 0.5)
+	style.shadow_size = 0
+	style.shadow_offset = Vector2(4, 4) # Hard shadow
 	
 	add_theme_stylebox_override("panel", style)
 	
-	custom_minimum_size = Vector2(96, 96)
-	size = Vector2(96, 96)
+	custom_minimum_size = Vector2(48, 48) # Half size for low-res viewport
+	size = Vector2(48, 48)
 	pivot_offset = size / 2.0
 
 func _on_mouse_entered():

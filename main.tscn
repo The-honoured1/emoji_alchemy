@@ -22,9 +22,157 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.05, 0.05, 0.1, 1)
+color = Color(0.02, 0.02, 0.05, 1)
 
-[node name="BoardArea" type="Control" parent="."]
+[node name="Screens" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleScreen" type="Control" parent="Screens"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Screens/TitleScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -200.0
+offset_right = 150.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="Screens/TitleScreen/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 40
+text = "EMOJI
+ALCHEMY"
+horizontal_alignment = 1
+
+[node name="Margin" type="Control" parent="Screens/TitleScreen/VBox"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="BtnSandbox" type="Button" parent="Screens/TitleScreen/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "SANDBOX"
+
+[node name="BtnBlitz" type="Button" parent="Screens/TitleScreen/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "BLITZ (3 MIN)"
+
+[node name="BtnTarget" type="Button" parent="Screens/TitleScreen/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "TARGET HUNT"
+
+[node name="BtnSettings" type="Button" parent="Screens/TitleScreen/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="SettingsScreen" type="Control" parent="Screens"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Screens/SettingsScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -150.0
+offset_right = 140.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Screens/SettingsScreen/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Label" type="Label" parent="Screens/SettingsScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="HBoxSFX" type="HBoxContainer" parent="Screens/SettingsScreen/Panel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Screens/SettingsScreen/Panel/VBox/HBoxSFX"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SOUND"
+
+[node name="CheckSFX" type="CheckBox" parent="Screens/SettingsScreen/Panel/VBox/HBoxSFX"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="HBoxMusic" type="HBoxContainer" parent="Screens/SettingsScreen/Panel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Screens/SettingsScreen/Panel/VBox/HBoxMusic"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "MUSIC"
+
+[node name="CheckMusic" type="CheckBox" parent="Screens/SettingsScreen/Panel/VBox/HBoxMusic"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="BtnBack" type="Button" parent="Screens/SettingsScreen/Panel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "BACK"
+
+[node name="GameScreen" type="Control" parent="Screens"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BoardArea" type="Control" parent="Screens/GameScreen"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,7 +181,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_board")
 
-[node name="MergeParticles" type="CPUParticles2D" parent="BoardArea"]
+[node name="MergeParticles" type="CPUParticles2D" parent="Screens/GameScreen/BoardArea"]
 unique_name_in_owner = true
 z_index = 10
 emitting = false
@@ -45,13 +193,11 @@ spread = 180.0
 gravity = Vector2(0, 0)
 initial_velocity_min = 150.0
 initial_velocity_max = 300.0
-scale_amount_min = 8.0
-scale_amount_max = 15.0
+scale_amount_min = 4.0
+scale_amount_max = 8.0
 color = Color(0.8, 0.9, 1, 1)
-hue_variation_min = -0.5
-hue_variation_max = 0.5
 
-[node name="UI" type="Control" parent="."]
+[node name="UI" type="Control" parent="Screens/GameScreen"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,141 +206,141 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="FloatingHeader" type="MarginContainer" parent="UI"]
+[node name="FloatingHeader" type="MarginContainer" parent="Screens/GameScreen/UI"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 100.0
+offset_bottom = 80.0
 grow_horizontal = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="Panel" type="PanelContainer" parent="UI/FloatingHeader"]
-layout_mode = 2
-
-[node name="HBox" type="HBoxContainer" parent="UI/FloatingHeader/Panel"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Margin" type="MarginContainer" parent="UI/FloatingHeader/Panel/HBox"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
+theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 20
+theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="HBox" type="HBoxContainer" parent="UI/FloatingHeader/Panel/HBox/Margin"]
+[node name="Panel" type="PanelContainer" parent="Screens/GameScreen/UI/FloatingHeader"]
 layout_mode = 2
-theme_override_constants/separation = 15
 
-[node name="ModeSelector" type="OptionButton" parent="UI/FloatingHeader/Panel/HBox/Margin/HBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 45)
+[node name="HBox" type="HBoxContainer" parent="Screens/GameScreen/UI/FloatingHeader/Panel"]
 layout_mode = 2
-item_count = 3
-popup/item_0/text = "Sandbox"
-popup/item_0/id = 0
-popup/item_1/text = "Blitz (3 min)"
-popup/item_1/id = 1
-popup/item_2/text = "Target Hunt"
-popup/item_2/id = 2
+theme_override_constants/separation = 10
 
-[node name="KeyboardAlchemy" type="LineEdit" parent="UI/FloatingHeader/Panel/HBox/Margin/HBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 45)
+[node name="Margin" type="MarginContainer" parent="Screens/GameScreen/UI/FloatingHeader/Panel/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-placeholder_text = "Search symbols (e.g. fire, 💧)..."
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="HBox" type="HBoxContainer" parent="Screens/GameScreen/UI/FloatingHeader/Panel/HBox/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="KeyboardAlchemy" type="LineEdit" parent="Screens/GameScreen/UI/FloatingHeader/Panel/HBox/Margin/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search..."
 alignment = 1
 clear_button_enabled = true
 
-[node name="GameStatus" type="Label" parent="UI/FloatingHeader/Panel/HBox/Margin/HBox"]
+[node name="GameStatus" type="Label" parent="Screens/GameScreen/UI/FloatingHeader/Panel/HBox/Margin/HBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.9, 1, 1)
-theme_override_font_sizes/font_size = 18
-text = "Mode: Sandbox"
+text = "..."
 
-[node name="InventoryPanel" type="PanelContainer" parent="UI"]
+[node name="BtnExitGame" type="Button" parent="Screens/GameScreen/UI/FloatingHeader/Panel/HBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(400, 0)
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+text = "X"
+
+[node name="InventoryPanel" type="PanelContainer" parent="Screens/GameScreen/UI"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 180)
 layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 0
-grow_vertical = 2
+grow_horizontal = 2
+grow_vertical = 0
 
-[node name="VBox" type="VBoxContainer" parent="UI/InventoryPanel"]
+[node name="VBox" type="VBoxContainer" parent="Screens/GameScreen/UI/InventoryPanel"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Margin" type="MarginContainer" parent="UI/InventoryPanel/VBox"]
-layout_mode = 2
-theme_override_constants/margin_top = 100
-
-[node name="CategoryTabs" type="TabBar" parent="UI/InventoryPanel/VBox"]
+[node name="CategoryTabs" type="TabBar" parent="Screens/GameScreen/UI/InventoryPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 tab_count = 1
 tab_0/text = "All"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/InventoryPanel/VBox"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Screens/GameScreen/UI/InventoryPanel/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/InventoryPanel/VBox/ScrollContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Screens/GameScreen/UI/InventoryPanel/VBox/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 15
-theme_override_constants/margin_bottom = 15
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
-[node name="InventoryBox" type="GridContainer" parent="UI/InventoryPanel/VBox/ScrollContainer/MarginContainer"]
+[node name="InventoryBox" type="GridContainer" parent="Screens/GameScreen/UI/InventoryPanel/VBox/ScrollContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
-columns = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5
 
-[node name="InventoryToggle" type="Button" parent="UI"]
+[node name="InventoryToggle" type="Button" parent="Screens/GameScreen/UI"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -80.0
-offset_top = -80.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = -58.0
+offset_top = -58.0
+offset_right = -10.0
+offset_bottom = -10.0
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 24
 text = "🎒"
 
-[node name="ClearBoard" type="Button" parent="UI"]
+[node name="ClearBoard" type="Button" parent="Screens/GameScreen/UI"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = -80.0
-offset_right = 80.0
-offset_bottom = -20.0
+offset_left = 10.0
+offset_top = -58.0
+offset_right = 58.0
+offset_bottom = -10.0
 grow_vertical = 0
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 24
 text = "🧹"
+
+[node name="TransitionOverlay" type="ColorRect" parent="."]
+unique_name_in_owner = true
+z_index = 200
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)

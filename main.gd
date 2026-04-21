@@ -1,10 +1,9 @@
 extends Control
 
 @onready var inventory_box = %InventoryBox
-@onready var board_area = $BoardArea
+@onready var board_area = $Screens/GameScreen/BoardArea
 @onready var keyboard_alchemy = %KeyboardAlchemy
 @onready var category_tabs = %CategoryTabs
-@onready var mode_selector = %ModeSelector
 @onready var game_status = %GameStatus
 @onready var timer = $Timer
 @onready var inventory_panel = %InventoryPanel
@@ -12,9 +11,15 @@ extends Control
 @onready var clear_board_btn = %ClearBoard
 @onready var background = $Background
 
+@onready var title_screen = %TitleScreen
+@onready var settings_screen = %SettingsScreen
+@onready var game_screen = %GameScreen
+
 enum GameMode { SANDBOX, BLITZ, TARGET }
+enum GameState { MENU, SETTINGS, GAME }
 
 var current_mode = GameMode.SANDBOX
+var current_state = GameState.MENU
 var search_query: String = ""
 var selected_category: String = "All"
 var target_emoji: String = ""
@@ -43,19 +48,28 @@ func _ready():
 	_setup_ui()
 	_populate_inventory()
 	
+	# Core Logic Signals
 	RecipeManager.sequence_discovered.connect(_on_sequence_discovered)
 	RecipeManager.request_merge.connect(handle_merge)
 	keyboard_alchemy.text_submitted.connect(_on_keyboard_alchemy_submitted)
 	keyboard_alchemy.text_changed.connect(_on_search_text_changed)
 	category_tabs.tab_changed.connect(_on_category_tab_changed)
-	mode_selector.item_selected.connect(_on_mode_selected)
 	timer.timeout.connect(_on_timer_timeout)
 	
+	# Menu/UI Signals
 	inventory_toggle.pressed.connect(_toggle_inventory)
 	clear_board_btn.pressed.connect(_clear_board)
-	get_viewport().size_changed.connect(_on_viewport_resized)
+	%BtnExitGame.pressed.connect(func(): _switch_state(GameState.MENU))
+	%BtnSettings.pressed.connect(func(): _switch_state(GameState.SETTINGS))
+	%BtnBack.pressed.connect(func(): _switch_state(GameState.MENU))
 	
-	_on_viewport_resized() # Initial layout check
+	%BtnSandbox.pressed.connect(func(): _start_game(GameMode.SANDBOX))
+	%BtnBlitz.pressed.connect(func(): _start_game(GameMode.BLITZ))
+	%BtnTarget.pressed.connect(func(): _start_game(GameMode.TARGET))
+	
+	get_viewport().size_changed.connect(_on_viewport_resized)
+	_switch_state(GameState.MENU)
+	_on_viewport_resized()
 
 func _setup_styles():
 	# Background Shader
@@ -64,36 +78,69 @@ func _setup_styles():
 	mat.shader = shader
 	background.material = mat
 	
-	# Header Glass Style
-	var glass = StyleBoxFlat.new()
-	glass.bg_color = Color(1, 1, 1, 0.1)
-	glass.corner_radius_top_left = 20
-	glass.corner_radius_top_right = 20
-	glass.corner_radius_bottom_left = 20
-	glass.corner_radius_bottom_right = 20
-	glass.border_width_left = 2
-	glass.border_width_top = 2
-	glass.border_width_right = 2
-	glass.border_width_bottom = 2
-	glass.border_color = Color(1, 1, 1, 0.15)
-	$UI/FloatingHeader/Panel.add_theme_stylebox_override("panel", glass)
+	# Common Pixel Style
+	var retro_box = StyleBoxFlat.new()
+	retro_box.bg_color = Color(0.1, 0.1, 0.15, 0.9)
+	retro_box.border_width_left = 2
+	retro_box.border_width_top = 2
+	retro_box.border_width_right = 2
+	retro_box.border_width_bottom = 2
+	retro_box.border_color = Color(0.5, 0.5, 0.6, 1.0)
+	retro_box.corner_radius_top_left = 0
+	retro_box.corner_radius_top_right = 0
+	retro_box.corner_radius_bottom_left = 0
+	retro_box.corner_radius_bottom_right = 0
 	
-	# Sidebar Style
-	var sidebar_style = StyleBoxFlat.new()
-	sidebar_style.bg_color = Color(0.02, 0.02, 0.05, 0.85)
-	sidebar_style.border_width_left = 2
-	sidebar_style.border_color = Color(1, 1, 1, 0.1)
-	inventory_panel.add_theme_stylebox_override("panel", sidebar_style)
+	# Apply to panels
+	$Screens/SettingsScreen/Panel.add_theme_stylebox_override("panel", retro_box)
+	$Screens/GameScreen/UI/FloatingHeader/Panel.add_theme_stylebox_override("panel", retro_box)
+	inventory_panel.add_theme_stylebox_override("panel", retro_box)
 
 func _setup_ui():
-	# Populate Category Tabs
 	category_tabs.clear_tabs()
 	category_tabs.add_tab("All")
 	for cat in RecipeManager.categories:
 		category_tabs.add_tab(cat)
+
+func _switch_state(new_state: GameState):
+	var transition = %TransitionOverlay
+	var mat = ShaderMaterial.new()
+	mat.shader = load("res://assets/pixel_wipe.gdshader")
+	transition.material = mat
+	mat.set_shader_parameter("progress", 0.0)
 	
-	mode_selector.selected = 0
-	_set_mode(GameMode.SANDBOX)
+	var tween = create_tween()
+	tween.tween_property(mat, "shader_parameter/progress", 1.1, 0.4)
+	await tween.finished
+	
+	current_state = new_state
+	title_screen.visible = (current_state == GameState.MENU)
+	settings_screen.visible = (current_state == GameState.SETTINGS)
+	game_screen.visible = (current_state == GameState.GAME)
+	
+	if current_state == GameState.MENU:
+		timer.stop()
+	
+	var tween_out = create_tween()
+	tween_out.tween_property(mat, "shader_parameter/progress", 0.0, 0.4)
+
+func _start_game(mode: GameMode):
+	current_mode = mode
+	_switch_state(GameState.GAME)
+	_clear_board()
+	
+	blitz_discoveries = 0
+	target_emoji = ""
+	
+	match current_mode:
+		GameMode.SANDBOX:
+			game_status.text = "SANDBOX"
+		GameMode.BLITZ:
+			timer.start(180)
+			_update_status()
+		GameMode.TARGET:
+			_pick_random_target()
+			_update_status()
 
 func _populate_inventory():
 	for child in inventory_box.get_children():
@@ -171,75 +218,31 @@ func _pick_random_target():
 # ── Responsive Layout ────────────────────────────────────────
 
 func _on_viewport_resized():
-	var size = get_viewport().get_visible_rect().size
-	var is_portrait = size.y > size.x
-	
-	if is_portrait:
-		# Mobile Portrait: Bottom Drawer
-		inventory_panel.anchors_preset = Control.PRESET_BOTTOM_WIDE
-		inventory_panel.custom_minimum_size.y = size.y * 0.4
-		inventory_panel.custom_minimum_size.x = 0
-		inventory_box.columns = 4
-		$UI/FloatingHeader.offset_bottom = 120
-	else:
-		# Web/Desktop Landscape: Sidebar
-		inventory_panel.anchors_preset = Control.PRESET_RIGHT_WIDE
-		inventory_panel.custom_minimum_size.x = 400
-		inventory_panel.custom_minimum_size.y = 0
-		inventory_box.columns = 3
-		$UI/FloatingHeader.offset_bottom = 100
+	# In low-res world, we just keep things simple
+	inventory_panel.anchors_preset = Control.PRESET_BOTTOM_WIDE
+	inventory_panel.custom_minimum_size.y = 180
+	inventory_box.columns = 5
 
 func _toggle_inventory():
 	is_inventory_open = !is_inventory_open
-	var tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-	
 	var size = get_viewport().get_visible_rect().size
-	var is_portrait = size.y > size.x
+	var target_y = size.y - inventory_panel.size.y if is_inventory_open else size.y
 	
-	if is_inventory_open:
-		tween.tween_property(inventory_panel, "modulate:a", 1.0, 0.4)
-		if is_portrait:
-			tween.tween_property(inventory_panel, "position:y", size.y - inventory_panel.size.y, 0.4)
-		else:
-			tween.tween_property(inventory_panel, "position:x", size.x - inventory_panel.size.x, 0.4)
-	else:
-		tween.tween_property(inventory_panel, "modulate:a", 0.0, 0.4)
-		if is_portrait:
-			tween.tween_property(inventory_panel, "position:y", size.y, 0.4)
-		else:
-			tween.tween_property(inventory_panel, "position:x", size.x, 0.4)
+	var tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(inventory_panel, "position:y", target_y, 0.3)
 
 func _clear_board():
 	for piece in board_area.get_children():
 		if piece is CPUParticles2D: continue
-		var tween = create_tween()
-		tween.tween_property(piece, "scale", Vector2.ZERO, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-		tween.finished.connect(piece.queue_free)
+		piece.queue_free()
 
 # ── Game Modes ────────────────────────────────────────────────
 
 func _on_mode_selected(index: int):
-	_set_mode(index as GameMode)
+	pass # Deprecated
 
 func _set_mode(mode: GameMode):
-	current_mode = mode
-	timer.stop()
-	blitz_discoveries = 0
-	target_emoji = ""
-	
-	match current_mode:
-		GameMode.SANDBOX:
-			game_status.text = "Mode: Sandbox"
-		GameMode.BLITZ:
-			timer.start(180) # 3 minutes
-			_update_status()
-		GameMode.TARGET:
-			_pick_random_target()
-			_update_status()
-	
-	# Clear board for fresh mode start
-	for piece in board_area.get_children():
-		piece.queue_free()
+	pass # Deprecated
 
 func _update_status():
 	match current_mode:
