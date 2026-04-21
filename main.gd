@@ -280,7 +280,7 @@ func _spawn_on_board(emoji: String, pos: Vector2 = Vector2.ZERO):
 
 func handle_merge(result: String, pos: Vector2):
 	# 1. Particles
-	var particles = %MergeParticles
+	var particles = $BoardArea/MergeParticles
 	particles.global_position = pos
 	particles.emitting = true
 	
@@ -314,7 +314,7 @@ func _on_sequence_discovered(emoji: String):
 
 func _discovery_celebration(emoji: String):
 	# 1. Confetti
-	var particles = %MergeParticles.duplicate()
+	var particles = $BoardArea/MergeParticles.duplicate()
 	add_child(particles)
 	particles.amount = 100
 	particles.one_shot = true
