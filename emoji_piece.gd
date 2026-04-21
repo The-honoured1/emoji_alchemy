@@ -25,23 +25,28 @@ func set_emoji(emoji: String, inventory: bool = false):
 
 func _setup_style():
 	var style = StyleBoxFlat.new()
-	# Glassmorphism: semi-transparent white with a strong border
-	style.bg_color = Color(1.0, 1.0, 1.0, 0.15)
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.border_color = Color(1.0, 1.0, 1.0, 0.3)
-	style.corner_radius_top_left = 24
-	style.corner_radius_top_right = 24
-	style.corner_radius_bottom_left = 24
-	style.corner_radius_bottom_right = 24
-	style.shadow_color = Color(0, 0, 0, 0.2)
-	style.shadow_size = 15
+	# Improved Glassmorphism: semi-transparent white with better border and rounding
+	style.bg_color = Color(1.0, 1.0, 1.0, 0.12)
+	style.border_width_left = 3
+	style.border_width_top = 3
+	style.border_width_right = 3
+	style.border_width_bottom = 3
+	style.border_color = Color(1.0, 1.0, 1.0, 0.25)
+	
+	# More "organic" rounding
+	style.corner_radius_top_left = 28
+	style.corner_radius_top_right = 28
+	style.corner_radius_bottom_left = 20
+	style.corner_radius_bottom_right = 20
+	
+	style.shadow_color = Color(0, 0, 0, 0.3)
+	style.shadow_size = 20
+	style.shadow_offset = Vector2(0, 8)
+	
 	add_theme_stylebox_override("panel", style)
 	
-	custom_minimum_size = Vector2(90, 90)
-	size = Vector2(90, 90)
+	custom_minimum_size = Vector2(96, 96)
+	size = Vector2(96, 96)
 	pivot_offset = size / 2.0
 
 func _on_mouse_entered():
@@ -57,11 +62,17 @@ func _on_mouse_exited():
 func _get_drag_data(at_position: Vector2):
 	var preview = preload("res://emoji_piece.tscn").instantiate()
 	preview.set_emoji(emoji_string, false)
-	preview.modulate.a = 0.6
+	preview.modulate.a = 0.8
+	preview.rotation = deg_to_rad(randf_range(-10, 10))
+	
 	var c = Control.new()
 	c.add_child(preview)
 	preview.position = -preview.size / 2
 	set_drag_preview(c)
+	
+	# Small scale down effect on origin when dragged
+	var tween = create_tween()
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.1)
 	
 	return {"type": "emoji", "emoji": emoji_string, "source_node": self, "is_inventory": is_inventory_item}
 

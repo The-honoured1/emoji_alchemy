@@ -1,12 +1,16 @@
 extends Control
 
 @onready var inventory_box = %InventoryBox
-@onready var board_area = $VBoxContainer/BoardArea
+@onready var board_area = $BoardArea
 @onready var keyboard_alchemy = %KeyboardAlchemy
 @onready var category_tabs = %CategoryTabs
 @onready var mode_selector = %ModeSelector
 @onready var game_status = %GameStatus
 @onready var timer = $Timer
+@onready var inventory_panel = %InventoryPanel
+@onready var inventory_toggle = %InventoryToggle
+@onready var clear_board_btn = %ClearBoard
+@onready var background = $Background
 
 enum GameMode { SANDBOX, BLITZ, TARGET }
 
@@ -15,6 +19,7 @@ var search_query: String = ""
 var selected_category: String = "All"
 var target_emoji: String = ""
 var blitz_discoveries: int = 0
+var is_inventory_open: bool = true
 
 var emoji_names: Dictionary = {
 	"fire": "🔥", "water": "💧", "earth": "🌍", "wind": "💨",
@@ -28,14 +33,16 @@ var emoji_names: Dictionary = {
 	"star": "⭐", "rocket": "🚀", "robot": "🤖", "ghost": "👻",
 	"alien": "👽", "heart": "❤️", "pizza": "🍕", "beer": "🍺",
 	"wine": "🍷", "coffee": "☕", "bread": "🍞", "cheese": "🧀",
-	"milk": "🥛", "ice": "🧊", "snow": "❄️", "sun": "☀️",
+	"milk": "🥛", "ice": "🧊", "snow": "❄️",
 	"music": "🎶", "car": "🚗", "plane": "✈️", "ship": "🚢",
 	"house": "🏠", "city": "🏙️", "night": "🌃", "day": "🌅"
 }
 
 func _ready():
+	_setup_styles()
 	_setup_ui()
 	_populate_inventory()
+	
 	RecipeManager.sequence_discovered.connect(_on_sequence_discovered)
 	RecipeManager.request_merge.connect(handle_merge)
 	keyboard_alchemy.text_submitted.connect(_on_keyboard_alchemy_submitted)
@@ -43,6 +50,40 @@ func _ready():
 	category_tabs.tab_changed.connect(_on_category_tab_changed)
 	mode_selector.item_selected.connect(_on_mode_selected)
 	timer.timeout.connect(_on_timer_timeout)
+	
+	inventory_toggle.pressed.connect(_toggle_inventory)
+	clear_board_btn.pressed.connect(_clear_board)
+	get_viewport().size_changed.connect(_on_viewport_resized)
+	
+	_on_viewport_resized() # Initial layout check
+
+func _setup_styles():
+	# Background Shader
+	var shader = load("res://assets/alchemy_background.gdshader")
+	var mat = ShaderMaterial.new()
+	mat.shader = shader
+	background.material = mat
+	
+	# Header Glass Style
+	var glass = StyleBoxFlat.new()
+	glass.bg_color = Color(1, 1, 1, 0.1)
+	glass.corner_radius_top_left = 20
+	glass.corner_radius_top_right = 20
+	glass.corner_radius_bottom_left = 20
+	glass.corner_radius_bottom_right = 20
+	glass.border_width_left = 2
+	glass.border_width_top = 2
+	glass.border_width_right = 2
+	glass.border_width_bottom = 2
+	glass.border_color = Color(1, 1, 1, 0.15)
+	$UI/FloatingHeader/Panel.add_theme_stylebox_override("panel", glass)
+	
+	# Sidebar Style
+	var sidebar_style = StyleBoxFlat.new()
+	sidebar_style.bg_color = Color(0.02, 0.02, 0.05, 0.85)
+	sidebar_style.border_width_left = 2
+	sidebar_style.border_color = Color(1, 1, 1, 0.1)
+	inventory_panel.add_theme_stylebox_override("panel", sidebar_style)
 
 func _setup_ui():
 	# Populate Category Tabs
@@ -126,6 +167,54 @@ func _pick_random_target():
 		target_emoji = all_results.pick_random()
 	else:
 		target_emoji = "💎" # Fallback
+
+# ── Responsive Layout ────────────────────────────────────────
+
+func _on_viewport_resized():
+	var size = get_viewport().get_visible_rect().size
+	var is_portrait = size.y > size.x
+	
+	if is_portrait:
+		# Mobile Portrait: Bottom Drawer
+		inventory_panel.anchors_preset = Control.PRESET_BOTTOM_WIDE
+		inventory_panel.custom_minimum_size.y = size.y * 0.4
+		inventory_panel.custom_minimum_size.x = 0
+		inventory_box.columns = 4
+		$UI/FloatingHeader.offset_bottom = 120
+	else:
+		# Web/Desktop Landscape: Sidebar
+		inventory_panel.anchors_preset = Control.PRESET_RIGHT_WIDE
+		inventory_panel.custom_minimum_size.x = 400
+		inventory_panel.custom_minimum_size.y = 0
+		inventory_box.columns = 3
+		$UI/FloatingHeader.offset_bottom = 100
+
+func _toggle_inventory():
+	is_inventory_open = !is_inventory_open
+	var tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	
+	var size = get_viewport().get_visible_rect().size
+	var is_portrait = size.y > size.x
+	
+	if is_inventory_open:
+		tween.tween_property(inventory_panel, "modulate:a", 1.0, 0.4)
+		if is_portrait:
+			tween.tween_property(inventory_panel, "position:y", size.y - inventory_panel.size.y, 0.4)
+		else:
+			tween.tween_property(inventory_panel, "position:x", size.x - inventory_panel.size.x, 0.4)
+	else:
+		tween.tween_property(inventory_panel, "modulate:a", 0.0, 0.4)
+		if is_portrait:
+			tween.tween_property(inventory_panel, "position:y", size.y, 0.4)
+		else:
+			tween.tween_property(inventory_panel, "position:x", size.x, 0.4)
+
+func _clear_board():
+	for piece in board_area.get_children():
+		if piece is CPUParticles2D: continue
+		var tween = create_tween()
+		tween.tween_property(piece, "scale", Vector2.ZERO, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		tween.finished.connect(piece.queue_free)
 
 # ── Game Modes ────────────────────────────────────────────────
 
@@ -217,11 +306,55 @@ func _on_sequence_discovered(emoji: String):
 	if current_mode == GameMode.TARGET and emoji == target_emoji:
 		_win_game("Target Reached! You found " + emoji)
 	
-	# Discovery Juice
-	_discovery_flash()
-	screen_shake(0.4, 12.0) # Bigger shake for new stuff
+	# Discovery Celebration
+	_discovery_celebration(emoji)
+	screen_shake(0.4, 12.0)
 	
 	_populate_inventory()
+
+func _discovery_celebration(emoji: String):
+	# 1. Confetti
+	var particles = %MergeParticles.duplicate()
+	add_child(particles)
+	particles.amount = 100
+	particles.one_shot = true
+	particles.explosiveness = 1.0
+	particles.initial_velocity_min = 200
+	particles.initial_velocity_max = 500
+	particles.scale_amount_min = 10
+	particles.scale_amount_max = 20
+	particles.position = get_viewport().get_visible_rect().size / 2.0
+	particles.emitting = true
+	get_tree().create_timer(2.0).timeout.connect(particles.queue_free)
+	
+	# 2. Popup Label
+	var label = Label.new()
+	label.text = "NEW DISCOVERY!\n" + emoji
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 48)
+	label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	label.add_theme_constant_override("shadow_outline_size", 10)
+	label.z_index = 100
+	add_child(label)
+	
+	label.pivot_offset = label.size / 2.0
+	label.position = (get_viewport().get_visible_rect().size / 2.0) - (label.size / 2.0)
+	label.scale = Vector2.ZERO
+	
+	var tween = create_tween().set_parallel(false).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	
+	# Wait a frame for size calculation to be accurate
+	await get_tree().process_frame
+	label.pivot_offset = label.size / 2.0
+	label.position = (get_viewport().get_visible_rect().size / 2.0) - (label.size / 2.0)
+	
+	tween.tween_property(label, "scale", Vector2.ONE, 0.5)
+	tween.tween_property(label, "position:y", label.position.y - 100, 1.5).set_trans(Tween.TRANS_SINE)
+	tween.parallel().tween_property(label, "modulate:a", 0.0, 1.0).set_delay(0.5)
+	tween.finished.connect(label.queue_free)
+
+	# 3. Flash
+	_discovery_flash()
 
 func _discovery_flash():
 	# Simple flash effect by modulating the background or a dedicated overlay
