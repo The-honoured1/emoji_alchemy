@@ -24,40 +24,56 @@ func set_emoji(emoji: String, inventory: bool = false):
 		label.text = emoji_string
 
 func _setup_style():
+	var category = RecipeManager.get_category(emoji_string)
+	var base_color = _get_category_color(category)
+	
+	# Apply Shader
+	var shader = load("res://assets/pixel_beautify.gdshader")
+	var mat = ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("base_color", base_color)
+	mat.set_shader_parameter("bevel_size", 0.08)
+	mat.set_shader_parameter("shine_intensity", 0.0)
+	
+	material = mat
+	
+	# Drop Shadow (Flat hard shadow)
 	var style = StyleBoxFlat.new()
-	# Retro Pixel Style: Flat colors, sharp corners, thick pixel borders
-	style.bg_color = Color(0.15, 0.15, 0.2, 1.0)
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.border_color = Color(0.4, 0.4, 0.5, 1.0)
-	
-	# SHARP corners for retro feel
-	style.corner_radius_top_left = 0
-	style.corner_radius_top_right = 0
-	style.corner_radius_bottom_left = 0
-	style.corner_radius_bottom_right = 0
-	
-	style.shadow_color = Color(0, 0, 0, 0.5)
+	style.bg_color = Color(0, 0, 0, 0.4)
+	style.set_corner_radius_all(0)
 	style.shadow_size = 0
-	style.shadow_offset = Vector2(4, 4) # Hard shadow
-	
+	style.shadow_offset = Vector2(4, 4)
 	add_theme_stylebox_override("panel", style)
 	
-	custom_minimum_size = Vector2(48, 48) # Half size for low-res viewport
-	size = Vector2(48, 48)
+	custom_minimum_size = Vector2(64, 64)
+	size = Vector2(64, 64)
 	pivot_offset = size / 2.0
+	
+	if label:
+		label.add_theme_font_size_override("font_size", 42)
+
+func _get_category_color(cat: String) -> Color:
+	match cat:
+		"Atmosphere": return Color(0.4, 0.6, 0.9)  # Sky Blue
+		"Terrain": return Color(0.6, 0.4, 0.3)     # Earthy Brown
+		"Flora": return Color(0.3, 0.7, 0.3)       # Leaf Green
+		"Fauna": return Color(0.9, 0.7, 0.2)       # Golden Fur
+		"Crafting": return Color(0.5, 0.5, 0.6)    # Metal Gray
+		"Tech": return Color(0.6, 0.3, 0.8)        # Neon Purple
+		"Food": return Color(0.9, 0.3, 0.2)        # Delicious Red
+		_: return Color(0.5, 0.5, 0.5)              # Neutral Gray
 
 func _on_mouse_entered():
-	var tween = create_tween()
-	tween.tween_property(self, "scale", Vector2(1.15, 1.15), 0.1).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	modulate = Color(1.1, 1.1, 1.2) # Subtle glow
+	var tween = create_tween().set_parallel(true)
+	tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.1).set_trans(Tween.TRANS_BACK)
+	if material is ShaderMaterial:
+		tween.tween_property(material, "shader_parameter/shine_intensity", 0.4, 0.2)
 
 func _on_mouse_exited():
-	var tween = create_tween()
-	tween.tween_property(self, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	modulate = Color.WHITE
+	var tween = create_tween().set_parallel(true)
+	tween.tween_property(self, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_BACK)
+	if material is ShaderMaterial:
+		tween.tween_property(material, "shader_parameter/shine_intensity", 0.0, 0.3)
 
 func _get_drag_data(at_position: Vector2):
 	var preview = preload("res://emoji_piece.tscn").instantiate()

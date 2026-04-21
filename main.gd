@@ -78,18 +78,27 @@ func _setup_styles():
 	mat.shader = shader
 	background.material = mat
 	
-	# Common Pixel Style
+	# Common Pixel Style (New Vibrant/Vivid look)
 	var retro_box = StyleBoxFlat.new()
-	retro_box.bg_color = Color(0.1, 0.1, 0.15, 0.9)
-	retro_box.border_width_left = 2
-	retro_box.border_width_top = 2
-	retro_box.border_width_right = 2
-	retro_box.border_width_bottom = 2
-	retro_box.border_color = Color(0.5, 0.5, 0.6, 1.0)
-	retro_box.corner_radius_top_left = 0
-	retro_box.corner_radius_top_right = 0
-	retro_box.corner_radius_bottom_left = 0
-	retro_box.corner_radius_bottom_right = 0
+	retro_box.bg_color = Color(0.12, 0.12, 0.18, 0.95)
+	retro_box.border_width_left = 3
+	retro_box.border_width_top = 3
+	retro_box.border_width_right = 3
+	retro_box.border_width_bottom = 3
+	retro_box.border_color = Color(0.3, 0.3, 0.45, 1.0) # Slightly more color
+	
+	# Beveled depth for panels
+	retro_box.expand_margin_left = 2
+	retro_box.expand_margin_top = 2
+	retro_box.expand_margin_right = 2
+	retro_box.expand_margin_bottom = 2
+	
+	retro_box.set_corner_radius_all(0)
+	
+	# Glow/Shadow
+	retro_box.shadow_color = Color(0, 0, 0, 0.6)
+	retro_box.shadow_size = 0
+	retro_box.shadow_offset = Vector2(6, 6)
 	
 	# Apply to panels
 	$Screens/SettingsScreen/Panel.add_theme_stylebox_override("panel", retro_box)
@@ -283,7 +292,7 @@ func _spawn_on_board(emoji: String, pos: Vector2 = Vector2.ZERO):
 
 func handle_merge(result: String, pos: Vector2):
 	# 1. Particles
-	var particles = $BoardArea/MergeParticles
+	var particles = %MergeParticles
 	particles.global_position = pos
 	particles.emitting = true
 	
@@ -317,7 +326,7 @@ func _on_sequence_discovered(emoji: String):
 
 func _discovery_celebration(emoji: String):
 	# 1. Confetti
-	var particles = $BoardArea/MergeParticles.duplicate()
+	var particles = %MergeParticles.duplicate()
 	add_child(particles)
 	particles.amount = 100
 	particles.one_shot = true
