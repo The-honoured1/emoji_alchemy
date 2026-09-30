@@ -127,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       _ActionButton(
-                        label: 'Codex',
+                        label: 'Collection',
                         hint: 'All elements',
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const CollectionScreen()),

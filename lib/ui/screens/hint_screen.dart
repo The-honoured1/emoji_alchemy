@@ -109,7 +109,7 @@ class HintScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 1.2,
                                 fontSize: 12,
-                                fontFamily: 'Georgia',
+                                fontFamily: 'system',
                               ),
                             ),
                           ),
@@ -164,7 +164,7 @@ class HintScreen extends StatelessWidget {
         currentIndex: 1,
         onTap: (index) {
           if (index == 1) return;
-          final routeNames = ['/', '/lab', '/codex', '/profile'];
+          final routeNames = ['/', '/lab', '/collection', '/profile'];
           Navigator.of(context).pushReplacementNamed(routeNames[index]);
         },
       ),
@@ -269,7 +269,7 @@ class _HintRevealSheet extends StatelessWidget {
                   letterSpacing: 1.6,
                   fontWeight: FontWeight.w800,
                   fontSize: 11,
-                  fontFamily: 'Georgia',
+                  fontFamily: 'system',
                 ),
               ),
               const SizedBox(height: 10),
@@ -279,7 +279,7 @@ class _HintRevealSheet extends StatelessWidget {
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Georgia',
+                  fontFamily: 'system',
                 ),
               ),
               const SizedBox(height: 10),
@@ -288,7 +288,7 @@ class _HintRevealSheet extends StatelessWidget {
                 style: TextStyle(
                   color: AppTheme.offWhite.withValues(alpha: 0.8),
                   fontSize: 14,
-                  fontFamily: 'Georgia',
+                  fontFamily: 'system',
                 ),
               ),
               if (hint.recipe != null) ...[
@@ -299,7 +299,7 @@ class _HintRevealSheet extends StatelessWidget {
                     color: AppTheme.accentOrange,
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
-                    fontFamily: 'Georgia',
+                    fontFamily: 'system',
                   ),
                 ),
               ],
@@ -318,7 +318,7 @@ class _HintRevealSheet extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.4,
                       fontSize: 13,
-                      fontFamily: 'Georgia',
+                      fontFamily: 'system',
                     ),
                   ),
                 ),

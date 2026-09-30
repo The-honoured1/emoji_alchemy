@@ -270,7 +270,7 @@ class DiscoveryScreen extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.6,
                     fontSize: 13,
-                    fontFamily: 'Georgia',
+                    fontFamily: 'system',
                   ),
                 ),
               ),

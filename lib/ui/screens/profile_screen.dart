@@ -241,7 +241,7 @@ class ProfileScreen extends StatelessWidget {
                           color: isHighlighted ? Colors.white : AppTheme.inkBlack,
                           fontWeight: FontWeight.w800,
                           fontSize: 14,
-                          fontFamily: 'Georgia',
+                          fontFamily: 'system',
                         ),
                       ),
                     );

@@ -30,11 +30,11 @@ class AppBottomNavigation extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w800,
           letterSpacing: 1.2,
-          fontFamily: 'Georgia',
+          fontFamily: 'system',
         ),
         unselectedLabelStyle: const TextStyle(
           fontSize: 11,
-          fontFamily: 'Georgia',
+          fontFamily: 'system',
           letterSpacing: 0.8,
         ),
         items: const [

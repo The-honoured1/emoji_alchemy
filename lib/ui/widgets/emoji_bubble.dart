@@ -76,7 +76,7 @@ class EmojiBubble extends StatelessWidget {
                   color: highlighted ? AppTheme.offWhite : AppTheme.inkBlack,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.6,
-                  fontFamily: 'Georgia',
+                  fontFamily: 'system',
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
