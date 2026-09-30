@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'game_state.dart';
-import 'game_screen.dart';
+import 'providers/game_state.dart';
+import 'theme/app_theme.dart';
+import 'ui/screens/home_screen.dart';
+import 'ui/screens/game_screen.dart';
+import 'ui/screens/codex_screen.dart';
+import 'ui/screens/profile_screen.dart';
+import 'ui/screens/hint_screen.dart';
 
 void main() {
   runApp(
@@ -20,15 +25,15 @@ class EmojiAlchemyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Emoji Alchemy',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6C3483),
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-        fontFamily: 'Roboto',
-      ),
-      home: const GameScreen(),
+      theme: AppTheme.inkPaperTheme,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomeScreen(),
+        '/lab': (context) => const GameScreen(),
+        '/codex': (context) => const CodexScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/hints': (context) => const HintScreen(),
+      },
     );
   }
 }

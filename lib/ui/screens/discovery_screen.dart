@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../data/element_data.dart';
 import '../../models/emoji_element.dart';
 import '../../providers/game_state.dart';
+import '../../theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
 import '../widgets/emoji_bubble.dart';
 
@@ -22,8 +23,7 @@ class DiscoveryScreen extends StatelessWidget {
     final seenUnlocks = <String>{};
     final unlocks = ElementData.combinations
         .where(
-          (combo) =>
-              combo.element1 == element.id || combo.element2 == element.id,
+          (combo) => combo.element1 == element.id || combo.element2 == element.id,
         )
         .where((combo) {
           final ordered = [combo.element1, combo.element2]..sort();
@@ -38,191 +38,185 @@ class DiscoveryScreen extends StatelessWidget {
     final recipeUsed = outcome != null
         ? '${outcome!.ingredientA.emoji} ${outcome!.ingredientA.name} + ${outcome!.ingredientB.emoji} ${outcome!.ingredientB.name} = ${element.emoji} ${element.name}'
         : (recipes.isNotEmpty
-              ? gameState.recipeText(recipes.first)
-              : 'This discovery has no stored recipe yet.');
+            ? gameState.recipeText(recipes.first)
+            : 'No stored formulation record.');
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        title: const Text(
-          'Discovery',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        centerTitle: false,
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).maybePop(),
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppTheme.inkBlack, width: 1.5),
+              ),
+              child: const Icon(Icons.arrow_back, size: 16, color: AppTheme.inkBlack),
+            ),
+          ),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'FORMULATION',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppTheme.mutedInk,
+                letterSpacing: 2.2,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text('Element Dossier', style: theme.textTheme.titleMedium),
+          ],
         ),
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
           children: [
-            Text(
-              '- DISCOVERY -',
-              style: theme.textTheme.bodySmall?.copyWith(
-                letterSpacing: 1.7,
-                color: const Color(0xFF7A5D42),
-              ),
-            ).animate().fadeIn(duration: 250.ms),
-            const SizedBox(height: 16),
+            Container(height: 1.5, color: AppTheme.inkBlack),
+            const SizedBox(height: 18),
+
+            // Hero Element Dossier Card
             Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 24,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: const Color(0xFFB89672),
-                      width: 1.2,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 26),
+              decoration: const BoxDecoration(
+                color: AppTheme.inkBlack,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppTheme.stampRed, width: 1.2),
+                    ),
+                    child: Text(
+                      element.category.name.toUpperCase(),
+                      style: const TextStyle(
+                        color: AppTheme.stampRed,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 2.0,
+                      ),
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4B382E),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          element.category.name.toUpperCase(),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: const Color(0xFFF7E8D2),
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      EmojiBubble(
-                        element: element,
-                        size: 124,
-                        highlighted: true,
-                        accentColor: const Color(0xFFE1B26C),
-                      ).animate().scale(
-                        begin: const Offset(0.88, 0.88),
-                        duration: 420.ms,
-                        curve: Curves.easeOutBack,
-                      ),
-                      const SizedBox(height: 18),
-                      Text(
-                        element.name,
-                        style: theme.textTheme.displayLarge?.copyWith(
-                          fontSize: 34,
-                          color: const Color(0xFFF6ECDD),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'You discovered a new ingredient for the lab.',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFFE6D7C3),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                  const SizedBox(height: 20),
+                  EmojiBubble(
+                    element: element,
+                    size: 110,
+                    highlighted: true,
+                  ).animate().scale(
+                    begin: const Offset(0.85, 0.85),
+                    duration: 350.ms,
+                    curve: Curves.easeOutBack,
                   ),
-                )
-                .animate()
-                .fadeIn(duration: 350.ms)
-                .slideY(begin: 0.08, duration: 350.ms),
-            const SizedBox(height: 20),
+                  const SizedBox(height: 18),
+                  Text(
+                    element.name,
+                    style: theme.textTheme.displayLarge?.copyWith(
+                      fontSize: 32,
+                      color: AppTheme.paleText,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Recorded in the Great Alchemical Codex.',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppTheme.paleText.withValues(alpha: 0.6),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(duration: 350.ms),
+
+            const SizedBox(height: 18),
+
             _SectionCard(
-              title: 'Recipe Used',
+              title: 'RECIPE LOG',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     recipeUsed,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF3F2E21),
+                      color: AppTheme.inkBlack,
                     ),
                   ),
                   if (recipes.length > 1) ...[
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Text(
-                      '${recipes.length} different recipes can create ${element.name}.',
+                      '${recipes.length} known recipes synthesize ${element.name}.',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF7A5D42),
-                        fontWeight: FontWeight.w600,
+                        color: AppTheme.mutedInk,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
                 ],
               ),
-            ).animate().fadeIn(delay: 120.ms, duration: 280.ms),
-            const SizedBox(height: 16),
+            ).animate().fadeIn(delay: 100.ms, duration: 250.ms),
+
+            const SizedBox(height: 14),
+
             _SectionCard(
-              title: 'Next Best Hints',
+              title: 'PROSPECTIVE DERIVATIVES',
               child: Column(
                 children: followUpHints.map((hint) {
                   return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(14),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF5E9D5),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: const Color(0xFFD7B78E),
-                        width: 1,
-                      ),
+                      border: Border.all(color: AppTheme.inkBlack, width: 1),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          hint.badge,
+                          hint.badge.toUpperCase(),
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: const Color(0xFF8A4F2B),
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.1,
+                            color: AppTheme.stampRed,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 4),
                         Text(
                           hint.title,
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: const Color(0xFF2E241A),
+                            fontSize: 15,
+                            color: AppTheme.inkBlack,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 4),
                         Text(
                           hint.detail,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: const Color(0xFF4A3726),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.inkBlack.withValues(alpha: 0.8),
                           ),
                         ),
-                        if (hint.recipe != null) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            hint.recipe!,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFF7A5D42),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
                       ],
                     ),
                   );
                 }).toList(),
               ),
-            ).animate().fadeIn(delay: 180.ms, duration: 280.ms),
-            const SizedBox(height: 16),
+            ).animate().fadeIn(delay: 150.ms, duration: 250.ms),
+
+            const SizedBox(height: 14),
+
             _SectionCard(
-              title: 'What This Unlocks',
+              title: 'KNOWN POTENTIALS',
               child: Column(
                 children: unlocks.isEmpty
                     ? [
                         Text(
-                          'You have already explored the obvious follow-ups for ${element.name}. Try pairing it with rarer items from other categories.',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: const Color(0xFF4A3726),
-                          ),
+                          'All immediate combinations for ${element.name} recorded. Synthesize rarer reagents to proceed.',
+                          style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.mutedInk),
                         ),
                       ]
                     : unlocks.map((combo) {
@@ -232,22 +226,24 @@ class DiscoveryScreen extends StatelessWidget {
                         final other = ElementData.elements[otherId]!;
                         final result = ElementData.elements[combo.result]!;
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.only(bottom: 8),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  '${element.emoji} + ${other.emoji} = ${result.emoji}',
+                                  '${element.emoji} + ${other.emoji} → ${result.emoji}',
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    color: const Color(0xFF2E241A),
+                                    fontSize: 16,
+                                    color: AppTheme.inkBlack,
                                   ),
                                 ),
                               ),
                               Text(
-                                result.name,
+                                result.name.toUpperCase(),
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: const Color(0xFF7A5D42),
-                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.stampRed,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.8,
                                 ),
                               ),
                             ],
@@ -255,21 +251,29 @@ class DiscoveryScreen extends StatelessWidget {
                         );
                       }).toList(),
               ),
-            ).animate().fadeIn(delay: 240.ms, duration: 280.ms),
+            ).animate().fadeIn(delay: 200.ms, duration: 250.ms),
+
             const SizedBox(height: 22),
-            ElevatedButton(
-              onPressed: () {
+
+            GestureDetector(
+              onTap: () {
                 Navigator.of(context).pushReplacementNamed('/lab');
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E241A),
-                foregroundColor: Colors.white,
+              child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
+                color: AppTheme.inkBlack,
+                alignment: Alignment.center,
+                child: const Text(
+                  'RETURN TO LAB →',
+                  style: TextStyle(
+                    color: AppTheme.paleText,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.6,
+                    fontSize: 13,
+                    fontFamily: 'Georgia',
+                  ),
                 ),
               ),
-              child: const Text('Keep Exploring'),
             ),
           ],
         ),
@@ -300,21 +304,20 @@ class _SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.66),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFD7B78E), width: 1.1),
+        border: Border.all(color: AppTheme.inkBlack, width: 1.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title.toUpperCase(),
+            title,
             style: theme.textTheme.bodySmall?.copyWith(
-              letterSpacing: 1.4,
-              color: const Color(0xFF7A5D42),
-              fontWeight: FontWeight.w700,
+              letterSpacing: 1.6,
+              color: AppTheme.mutedInk,
+              fontWeight: FontWeight.w800,
+              fontSize: 11,
             ),
           ),
           const SizedBox(height: 12),
