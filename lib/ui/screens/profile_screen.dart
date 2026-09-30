@@ -265,14 +265,28 @@ class ProfileScreen extends StatelessWidget {
 
   String _categoryLabel(ElementCategory category) {
     switch (category) {
+      case ElementCategory.base:
+        return 'Base';
       case ElementCategory.nature:
         return 'Nature';
+      case ElementCategory.weather:
+        return 'Weather';
+      case ElementCategory.animals:
+        return 'Animals';
+      case ElementCategory.human:
+        return 'Human';
       case ElementCategory.technology:
         return 'Technology';
       case ElementCategory.magic:
         return 'Magic';
+      case ElementCategory.food:
+        return 'Food';
       case ElementCategory.space:
         return 'Space';
+      case ElementCategory.mythology:
+        return 'Mythology';
+      case ElementCategory.other:
+        return 'Other';
     }
   }
 

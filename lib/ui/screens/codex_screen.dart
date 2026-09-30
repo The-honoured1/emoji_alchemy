@@ -17,11 +17,17 @@ class _CodexScreenState extends State<CodexScreen> {
   ElementCategory? selectedCategory;
 
   final List<Map<String, dynamic>> _filters = [
-    {'label': 'ALL', 'category': null},
-    {'label': 'NATURE', 'category': ElementCategory.nature},
-    {'label': 'TECH', 'category': ElementCategory.technology},
-    {'label': 'MAGIC', 'category': ElementCategory.magic},
-    {'label': 'SPACE', 'category': ElementCategory.space},
+    {'label': 'ALL',       'category': null},
+    {'label': 'NATURE',    'category': ElementCategory.nature},
+    {'label': 'WEATHER',   'category': ElementCategory.weather},
+    {'label': 'ANIMALS',   'category': ElementCategory.animals},
+    {'label': 'HUMAN',     'category': ElementCategory.human},
+    {'label': 'TECH',      'category': ElementCategory.technology},
+    {'label': 'MAGIC',     'category': ElementCategory.magic},
+    {'label': 'FOOD',      'category': ElementCategory.food},
+    {'label': 'SPACE',     'category': ElementCategory.space},
+    {'label': 'MYTH',      'category': ElementCategory.mythology},
+    {'label': 'OTHER',     'category': ElementCategory.other},
   ];
 
   @override

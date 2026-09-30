@@ -7,6 +7,34 @@ import '../models/element_category.dart';
 import '../models/placed_element.dart';
 import '../data/element_data.dart';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Daily Puzzle model
+// ─────────────────────────────────────────────────────────────────────────────
+
+class DailyPuzzle {
+  final int dayNumber;
+  final EmojiElement target;
+  final List<EmojiElement> startingElements;
+  final List<String> solutionPath; // human-readable step labels
+  final bool completed;
+
+  const DailyPuzzle({
+    required this.dayNumber,
+    required this.target,
+    required this.startingElements,
+    required this.solutionPath,
+    this.completed = false,
+  });
+
+  DailyPuzzle copyWith({bool? completed}) => DailyPuzzle(
+        dayNumber: dayNumber,
+        target: target,
+        startingElements: startingElements,
+        solutionPath: solutionPath,
+        completed: completed ?? this.completed,
+      );
+}
+
 class CombinationOutcome {
   final EmojiElement result;
   final EmojiElement ingredientA;
@@ -38,13 +66,21 @@ class LabHint {
 }
 
 class GameState extends ChangeNotifier {
-  final SharedPreferences _prefs;
+  late SharedPreferences _prefs;
+  bool _initialized = false;
   final Uuid _uuid = const Uuid();
 
   Set<String> _discoveredElements = {};
   final List<PlacedElement> _canvasElements = [];
   int _hintsRemaining = 3;
   LabHint? _activeHint;
+
+  // ── Daily puzzle ──────────────────────────────────────────────────────────
+  DailyPuzzle? _dailyPuzzle;
+  final List<PlacedElement> _dailyCanvasElements = [];
+
+  DailyPuzzle? get dailyPuzzle => _dailyPuzzle;
+  List<PlacedElement> get dailyCanvasElements => _dailyCanvasElements;
 
   // Stats
   int get discoveriesCount => _discoveredElements.length;
@@ -112,8 +148,16 @@ class GameState extends ChangeNotifier {
     return 'Apprentice 🧪';
   }
 
-  GameState(this._prefs) {
+  bool get initialized => _initialized;
+
+  GameState() {
+    _init();
+  }
+
+  Future<void> _init() async {
+    _prefs = await SharedPreferences.getInstance();
     _loadProgress();
+    _initialized = true;
   }
 
   void _loadProgress() {
@@ -129,10 +173,15 @@ class GameState extends ChangeNotifier {
       _saveProgress();
     }
     _hintsRemaining = _prefs.getInt('hintsRemaining') ?? 3;
+
+    // Load daily puzzle
+    _loadDailyPuzzle();
+
     notifyListeners();
   }
 
   void _saveProgress() {
+    if (!_initialized) return;
     _prefs.setStringList('discoveredElements', _discoveredElements.toList());
     _prefs.setInt('hintsRemaining', _hintsRemaining);
   }
@@ -448,5 +497,172 @@ class GameState extends ChangeNotifier {
   String _comboKey(String element1, String element2, String result) {
     final ordered = [element1, element2]..sort();
     return '${ordered.first}:${ordered.last}:$result';
+  }
+
+  // ── Daily Puzzle Engine ────────────────────────────────────────────────────
+
+  static const int _puzzleEpochYear = 2026;
+  static const int _puzzleEpochMonth = 1;
+  static const int _puzzleEpochDay = 1;
+
+  /// Returns the current puzzle day number (1‑based).
+  int _currentPuzzleDay() {
+    final now = DateTime.now();
+    final epoch = DateTime(_puzzleEpochYear, _puzzleEpochMonth, _puzzleEpochDay);
+    final diff = now.difference(epoch).inDays;
+    return diff + 1; // day 1 = epoch day
+  }
+
+  /// Simple deterministic PRNG seeded by day number.
+  int _dailySeed([int offset = 0]) {
+    final day = _currentPuzzleDay() + offset;
+    // LCG constants (borrowed from classic LCG)
+    int seed = (day * 1664525 + 1013904223) % 0xFFFFFFFF;
+    return seed;
+  }
+
+  /// Pick a non‑base element reachable within 3‑5 steps from basic elements.
+  DailyPuzzle _generatePuzzle() {
+    final day = _currentPuzzleDay();
+
+    // Use day‑based seed to pick a target
+    final rand = _dailySeed();
+    final allElements = ElementData.elements.values
+        .where((e) => !e.isBase)               // no base elements
+        .where((e) => e.category != ElementCategory.base)
+        .toList();
+    final targetIndex = rand % allElements.length;
+    final target = allElements[targetIndex];
+
+    // Determine a simple path: 3‑5 steps from basic elements.
+    // We'll just pick a known combo that yields this target.
+    final possibleCombos = ElementData.combinations.where((c) => c.result == target.id).toList();
+    if (possibleCombos.isEmpty) {
+      // fallback to another target
+      return _generatePuzzle();
+    }
+
+    final combo = possibleCombos[rand % possibleCombos.length];
+    final ingredient1 = ElementData.elements[combo.element1]!;
+    final ingredient2 = ElementData.elements[combo.element2]!;
+
+    // Starting set: both ingredients (if both are base) + fire, water, earth, wind.
+    final startSet = <EmojiElement>{ingredient1, ingredient2};
+    // Ensure at least one of each base element is present for puzzle flexibility.
+    final baseElements = ElementData.elements.values.where((e) => e.isBase).toList();
+    for (final base in baseElements.take(3)) {
+      startSet.add(base);
+    }
+
+    final solutionPath = [
+      '${ingredient1.emoji} ${ingredient1.name} + ${ingredient2.emoji} ${ingredient2.name}',
+      '= ${target.emoji} ${target.name}',
+    ];
+
+    return DailyPuzzle(
+      dayNumber: day,
+      target: target,
+      startingElements: startSet.toList(),
+      solutionPath: solutionPath,
+    );
+  }
+
+  void _loadDailyPuzzle() {
+    if (!_initialized) return;
+
+    final lastPuzzleDay = _prefs.getInt('lastPuzzleDay') ?? 0;
+    final currentDay = _currentPuzzleDay();
+
+    if (lastPuzzleDay == currentDay) {
+      // Load saved puzzle
+      final savedTargetId = _prefs.getString('puzzleTarget');
+      final savedCompleted = _prefs.getBool('puzzleCompleted') ?? false;
+
+      if (savedTargetId != null && ElementData.elements.containsKey(savedTargetId)) {
+        final target = ElementData.elements[savedTargetId]!;
+        final startIds = _prefs.getStringList('puzzleStartIds') ?? [];
+        final startingElements = startIds.map((id) => ElementData.elements[id]!).where((e) => e != null).toList();
+        final solutionPath = _prefs.getStringList('puzzleSolutionPath') ?? [];
+
+        _dailyPuzzle = DailyPuzzle(
+          dayNumber: currentDay,
+          target: target,
+          startingElements: startingElements,
+          solutionPath: solutionPath,
+          completed: savedCompleted,
+        );
+        return;
+      }
+    }
+
+    // Generate a fresh puzzle for today
+    _dailyPuzzle = _generatePuzzle();
+    _dailyCanvasElements.clear();
+    _saveDailyPuzzle();
+  }
+
+  void _saveDailyPuzzle() {
+    if (!_initialized || _dailyPuzzle == null) return;
+
+    final p = _dailyPuzzle!;
+    _prefs.setInt('lastPuzzleDay', p.dayNumber);
+    _prefs.setString('puzzleTarget', p.target.id);
+    _prefs.setStringList('puzzleStartIds', p.startingElements.map((e) => e.id).toList());
+    _prefs.setStringList('puzzleSolutionPath', p.solutionPath);
+    _prefs.setBool('puzzleCompleted', p.completed);
+  }
+
+  /// For daily puzzle canvas interaction.
+  void addToDailyCanvas(EmojiElement element, double x, double y) {
+    _dailyCanvasElements.add(
+      PlacedElement(id: _uuid.v4(), element: element, x: x, y: y),
+    );
+    notifyListeners();
+  }
+
+  void updateDailyElementPosition(String topId, double x, double y) {
+    var index = _dailyCanvasElements.indexWhere((e) => e.id == topId);
+    if (index != -1) {
+      _dailyCanvasElements[index].x = x;
+      _dailyCanvasElements[index].y = y;
+      notifyListeners();
+    }
+  }
+
+  void removeDailyElement(String id) {
+    _dailyCanvasElements.removeWhere((e) => e.id == id);
+    notifyListeners();
+  }
+
+  void clearDailyCanvas() {
+    _dailyCanvasElements.clear();
+    notifyListeners();
+  }
+
+  /// Called when the daily target is discovered in the puzzle canvas.
+  void completeDailyPuzzle() {
+    if (_dailyPuzzle == null || _dailyPuzzle!.completed) return;
+    _dailyPuzzle = _dailyPuzzle!.copyWith(completed: true);
+    _saveDailyPuzzle();
+    notifyListeners();
+  }
+
+  bool get isDailyPuzzleCompleted => _dailyPuzzle?.completed ?? false;
+
+  /// Reset the puzzle to its initial state (keeping the same target).
+  void resetDailyPuzzle() {
+    _dailyCanvasElements.clear();
+    if (_dailyPuzzle != null) {
+      _dailyPuzzle = _dailyPuzzle!.copyWith(completed: false);
+    }
+    _saveDailyPuzzle();
+    notifyListeners();
+  }
+
+  /// For the UI: remaining time until next puzzle (midnight).
+  Duration get dailyPuzzleTimeRemaining {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
+    return tomorrow.difference(now);
   }
 }
