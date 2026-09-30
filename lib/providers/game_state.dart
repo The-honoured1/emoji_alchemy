@@ -578,7 +578,7 @@ class GameState extends ChangeNotifier {
       final savedTargetId = _prefs.getString('puzzleTarget');
       final savedCompleted = _prefs.getBool('puzzleCompleted') ?? false;
 
-      if (savedTargetId != null && ElementData.elements.containsKey(savedTargetId)) {
+      if (savedTargetId != null) {
         final target = ElementData.elements[savedTargetId]!;
         final startIds = _prefs.getStringList('puzzleStartIds') ?? [];
         final startingElements = startIds.map((id) => ElementData.elements[id]!).where((e) => e != null).toList();

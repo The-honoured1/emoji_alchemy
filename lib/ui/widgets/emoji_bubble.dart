@@ -22,7 +22,7 @@ class EmojiBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stamp = accentColor ?? AppTheme.stampRed;
+    final stamp = accentColor ?? AppTheme.accentOrange;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
@@ -31,7 +31,7 @@ class EmojiBubble extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         // Flat fill — ink stamp on paper feel
-        color: highlighted ? AppTheme.inkBlack : AppTheme.paperWarm,
+        color: highlighted ? AppTheme.inkBlack : AppTheme.lightGray,
         // Sharp corners — no rounded pills
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
@@ -73,7 +73,7 @@ class EmojiBubble extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: compactLabel ? 8 : 9,
-                  color: highlighted ? AppTheme.paleText : AppTheme.inkBlack,
+                  color: highlighted ? AppTheme.offWhite : AppTheme.inkBlack,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.6,
                   fontFamily: 'Georgia',

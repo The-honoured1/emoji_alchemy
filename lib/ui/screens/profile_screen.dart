@@ -36,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
             Text(
               'RECORDS',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.mutedInk,
+                color: AppTheme.darkGray,
                 letterSpacing: 2.2,
                 fontWeight: FontWeight.w800,
               ),
@@ -74,8 +74,8 @@ class ProfileScreen extends StatelessWidget {
                         width: 58,
                         height: 58,
                         decoration: BoxDecoration(
-                          color: AppTheme.stampRed,
-                          border: Border.all(color: AppTheme.paleText, width: 1.5),
+                          color: AppTheme.accentOrange,
+                          border: Border.all(color: AppTheme.offWhite, width: 1.5),
                         ),
                         alignment: Alignment.center,
                         child: const Text(
@@ -95,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
                             Text(
                               'Chris_Alch',
                               style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppTheme.paleText,
+                                color: AppTheme.offWhite,
                                 fontSize: 20,
                               ),
                             ),
@@ -103,7 +103,7 @@ class ProfileScreen extends StatelessWidget {
                             Text(
                               'RANK · SAGE MASTER',
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: AppTheme.sepiaGold,
+                                color: AppTheme.accentOrange,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 1.2,
                               ),
@@ -114,12 +114,12 @@ class ProfileScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          border: Border.all(color: AppTheme.darkHairline, width: 1.2),
+                          border: Border.all(color: AppTheme.mediumGray, width: 1.2),
                         ),
                         child: Text(
                           'ACTIVE',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppTheme.paleText.withValues(alpha: 0.7),
+                            color: AppTheme.offWhite.withValues(alpha: 0.7),
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.1,
                           ),
@@ -152,7 +152,7 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   'CATEGORY DISCOVERY',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.mutedInk,
+                    color: AppTheme.darkGray,
                     letterSpacing: 1.8,
                     fontWeight: FontWeight.w800,
                   ),
@@ -188,7 +188,7 @@ class ProfileScreen extends StatelessWidget {
                             Text(
                               '$discovered / $total (${(percent * 100).round()}%)',
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: AppTheme.stampRed,
+                                color: AppTheme.accentOrange,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -197,7 +197,7 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(height: 8),
                         Stack(
                           children: [
-                            Container(height: 6, color: AppTheme.paperWarm),
+                            Container(height: 6, color: AppTheme.lightGray),
                             FractionallySizedBox(
                               widthFactor: percent,
                               child: Container(height: 6, color: AppTheme.inkBlack),
@@ -213,7 +213,7 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   'WEEKLY ARCHIVE',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.mutedInk,
+                    color: AppTheme.darkGray,
                     letterSpacing: 1.8,
                     fontWeight: FontWeight.w800,
                   ),
@@ -228,9 +228,9 @@ class ProfileScreen extends StatelessWidget {
                       width: 40,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: isHighlighted ? AppTheme.stampRed : Colors.transparent,
+                        color: isHighlighted ? AppTheme.accentOrange : Colors.transparent,
                         border: Border.all(
-                          color: isHighlighted ? AppTheme.stampRed : AppTheme.inkBlack,
+                          color: isHighlighted ? AppTheme.accentOrange : AppTheme.inkBlack,
                           width: 1.2,
                         ),
                       ),
@@ -317,7 +317,7 @@ class _StatCard extends StatelessWidget {
             Text(
               title,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.mutedInk,
+                color: AppTheme.darkGray,
                 letterSpacing: 1.1,
                 fontSize: 10,
                 fontWeight: FontWeight.w800,

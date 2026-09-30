@@ -136,12 +136,12 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 3, height: 14, color: AppTheme.stampRed),
+            Container(width: 3, height: 14, color: AppTheme.accentOrange),
             const SizedBox(width: 10),
             Text(
               'Drag elements together to mix',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.paleText,
+                color: AppTheme.offWhite,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.6,
               ),
@@ -155,7 +155,7 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.stampRed,
+        color: AppTheme.accentOrange,
         border: Border.all(color: AppTheme.inkBlack, width: 1.5),
       ),
       child: Row(
@@ -318,7 +318,7 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
                   child: Text(
                     'Pinch to zoom  ·  Drag to overlap  ·  Recipes match automatically',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppTheme.paleText.withValues(alpha: 0.65),
+                      color: AppTheme.offWhite.withValues(alpha: 0.65),
                       fontSize: 11,
                       letterSpacing: 0.4,
                     ),

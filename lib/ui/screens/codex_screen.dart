@@ -57,7 +57,7 @@ class _CodexScreenState extends State<CodexScreen> {
             Text(
               'CODEX',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.mutedInk,
+                color: AppTheme.darkGray,
                 letterSpacing: 2.2,
                 fontWeight: FontWeight.w800,
               ),
@@ -89,14 +89,14 @@ class _CodexScreenState extends State<CodexScreen> {
                     Text(
                       '${gameState.discoveriesCount} discovered',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppTheme.paleText.withValues(alpha: 0.6),
+                        color: AppTheme.offWhite.withValues(alpha: 0.6),
                         letterSpacing: 0.8,
                       ),
                     ),
                     Text(
                       '${gameState.discoveriesCount} / ${gameState.maxDiscoveries}',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        color: AppTheme.stampRed,
+                        color: AppTheme.accentOrange,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
@@ -119,14 +119,14 @@ class _CodexScreenState extends State<CodexScreen> {
                         decoration: BoxDecoration(
                           color: isSelected ? AppTheme.inkBlack : Colors.transparent,
                           border: Border.all(
-                            color: isSelected ? AppTheme.inkBlack : AppTheme.hairline,
+                            color: isSelected ? AppTheme.inkBlack : AppTheme.mediumGray,
                             width: 1.2,
                           ),
                         ),
                         child: Text(
                           filter['label'],
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: isSelected ? AppTheme.paleText : AppTheme.mutedInk,
+                            color: isSelected ? AppTheme.offWhite : AppTheme.darkGray,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.4,
                           ),
@@ -149,13 +149,13 @@ class _CodexScreenState extends State<CodexScreen> {
                             Container(
                               width: 48,
                               height: 1.5,
-                              color: AppTheme.hairline,
+                              color: AppTheme.mediumGray,
                             ),
                             const SizedBox(height: 16),
                             Text(
                               'No discoveries yet.',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: AppTheme.mutedInk,
+                                color: AppTheme.darkGray,
                               ),
                             ),
                           ],
@@ -171,7 +171,7 @@ class _CodexScreenState extends State<CodexScreen> {
                           return Container(
                             decoration: BoxDecoration(
                               color: AppTheme.inkBlack,
-                              border: Border.all(color: AppTheme.darkHairline, width: 1),
+                              border: Border.all(color: AppTheme.mediumGray, width: 1),
                               boxShadow: [
                                 BoxShadow(
                                   color: AppTheme.inkBlack.withValues(alpha: 0.12),
@@ -189,7 +189,7 @@ class _CodexScreenState extends State<CodexScreen> {
                                 Text(
                                   element.name.toUpperCase(),
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.paleText.withValues(alpha: 0.75),
+                                    color: AppTheme.offWhite.withValues(alpha: 0.75),
                                     fontSize: 9,
                                     letterSpacing: 0.8,
                                   ),

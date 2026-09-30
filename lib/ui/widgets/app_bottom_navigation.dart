@@ -16,7 +16,7 @@ class AppBottomNavigation extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: AppTheme.inkBlack,
-        border: Border(top: BorderSide(color: AppTheme.darkHairline, width: 1)),
+        border: Border(top: BorderSide(color: AppTheme.mediumGray, width: 1)),
       ),
       child: BottomNavigationBar(
         currentIndex: currentIndex,
@@ -24,8 +24,8 @@ class AppBottomNavigation extends StatelessWidget {
         backgroundColor: Colors.transparent,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
-        selectedItemColor: AppTheme.stampRed,
-        unselectedItemColor: AppTheme.paleText.withValues(alpha: 0.45),
+        selectedItemColor: AppTheme.accentOrange,
+        unselectedItemColor: AppTheme.offWhite.withValues(alpha: 0.45),
         selectedLabelStyle: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w800,

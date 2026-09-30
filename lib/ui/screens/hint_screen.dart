@@ -35,7 +35,7 @@ class HintScreen extends StatelessWidget {
             Text(
               'ORACLE',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.mutedInk,
+                color: AppTheme.darkGray,
                 letterSpacing: 2.2,
                 fontWeight: FontWeight.w800,
               ),
@@ -67,7 +67,7 @@ class HintScreen extends StatelessWidget {
                     Text(
                       'HINT TOKENS',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppTheme.paleText.withValues(alpha: 0.6),
+                        color: AppTheme.offWhite.withValues(alpha: 0.6),
                         letterSpacing: 1.6,
                         fontWeight: FontWeight.w800,
                       ),
@@ -78,7 +78,7 @@ class HintScreen extends StatelessWidget {
                         Text(
                           '${gameState.hintsRemaining}',
                           style: theme.textTheme.displayLarge?.copyWith(
-                            color: AppTheme.paleText,
+                            color: AppTheme.offWhite,
                             fontSize: 40,
                           ),
                         ),
@@ -98,14 +98,14 @@ class HintScreen extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                             color: gameState.hintsRemaining > 0
-                                ? AppTheme.stampRed
-                                : AppTheme.darkHairline,
+                                ? AppTheme.accentOrange
+                                : AppTheme.mediumGray,
                             child: Text(
                               'REVEAL HINT →',
                               style: TextStyle(
                                 color: gameState.hintsRemaining > 0
                                     ? Colors.white
-                                    : AppTheme.paleText.withValues(alpha: 0.4),
+                                    : AppTheme.offWhite.withValues(alpha: 0.4),
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 1.2,
                                 fontSize: 12,
@@ -120,7 +120,7 @@ class HintScreen extends StatelessWidget {
                     Text(
                       'Consult the ancient manuscript to unlock a viable synthesis path.',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppTheme.paleText.withValues(alpha: 0.6),
+                        color: AppTheme.offWhite.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -138,7 +138,7 @@ class HintScreen extends StatelessWidget {
               Text(
                 'SUGGESTED PATHWAYS',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppTheme.mutedInk,
+                  color: AppTheme.darkGray,
                   letterSpacing: 1.8,
                   fontWeight: FontWeight.w800,
                 ),
@@ -184,9 +184,9 @@ class _HintCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: emphasized ? AppTheme.paperWarm : Colors.transparent,
+        color: emphasized ? AppTheme.lightGray : Colors.transparent,
         border: Border.all(
-          color: emphasized ? AppTheme.stampRed : AppTheme.inkBlack,
+          color: emphasized ? AppTheme.accentOrange : AppTheme.inkBlack,
           width: emphasized ? 1.8 : 1.2,
         ),
       ),
@@ -196,13 +196,13 @@ class _HintCard extends StatelessWidget {
           Row(
             children: [
               if (emphasized) ...[
-                Container(width: 4, height: 14, color: AppTheme.stampRed),
+                Container(width: 4, height: 14, color: AppTheme.accentOrange),
                 const SizedBox(width: 8),
               ],
               Text(
                 hint.badge.toUpperCase(),
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: emphasized ? AppTheme.stampRed : AppTheme.mutedInk,
+                  color: emphasized ? AppTheme.accentOrange : AppTheme.darkGray,
                   letterSpacing: 1.4,
                   fontWeight: FontWeight.w800,
                 ),
@@ -230,7 +230,7 @@ class _HintCard extends StatelessWidget {
             Text(
               hint.recipe!,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.stampRed,
+                color: AppTheme.accentOrange,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
@@ -256,7 +256,7 @@ class _HintRevealSheet extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: AppTheme.inkBlack,
-            border: Border.all(color: AppTheme.stampRed, width: 2),
+            border: Border.all(color: AppTheme.accentOrange, width: 2),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -265,7 +265,7 @@ class _HintRevealSheet extends StatelessWidget {
               Text(
                 hint.badge.toUpperCase(),
                 style: const TextStyle(
-                  color: AppTheme.stampRed,
+                  color: AppTheme.accentOrange,
                   letterSpacing: 1.6,
                   fontWeight: FontWeight.w800,
                   fontSize: 11,
@@ -276,7 +276,7 @@ class _HintRevealSheet extends StatelessWidget {
               Text(
                 hint.title,
                 style: const TextStyle(
-                  color: AppTheme.paleText,
+                  color: AppTheme.offWhite,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Georgia',
@@ -286,7 +286,7 @@ class _HintRevealSheet extends StatelessWidget {
               Text(
                 hint.detail,
                 style: TextStyle(
-                  color: AppTheme.paleText.withValues(alpha: 0.8),
+                  color: AppTheme.offWhite.withValues(alpha: 0.8),
                   fontSize: 14,
                   fontFamily: 'Georgia',
                 ),
@@ -296,7 +296,7 @@ class _HintRevealSheet extends StatelessWidget {
                 Text(
                   hint.recipe!,
                   style: const TextStyle(
-                    color: AppTheme.sepiaGold,
+                    color: AppTheme.accentOrange,
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
                     fontFamily: 'Georgia',
@@ -309,7 +309,7 @@ class _HintRevealSheet extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  color: AppTheme.stampRed,
+                  color: AppTheme.accentOrange,
                   alignment: Alignment.center,
                   child: const Text(
                     'DISMISS ADVICE',

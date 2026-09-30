@@ -53,7 +53,7 @@ class GameScreen extends StatelessWidget {
                           'THE LAB',
                           style: theme.textTheme.bodySmall?.copyWith(
                             letterSpacing: 2.2,
-                            color: AppTheme.mutedInk,
+                            color: AppTheme.darkGray,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -162,14 +162,14 @@ class _TopChip extends StatelessWidget {
     final theme = Theme.of(context);
     final active = enabled && onTap != null;
     final bg = !active
-        ? AppTheme.paperWarm
+        ? AppTheme.lightGray
         : danger
-            ? AppTheme.stampRed
+            ? AppTheme.accentOrange
             : AppTheme.inkBlack;
     final fg = !active
-        ? AppTheme.mutedInk
+        ? AppTheme.darkGray
         : Colors.white;
-    final borderColor = !active ? AppTheme.hairline : bg;
+    final borderColor = !active ? AppTheme.mediumGray : bg;
 
     return GestureDetector(
       onTap: active ? onTap : null,

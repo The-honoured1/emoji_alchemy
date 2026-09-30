@@ -71,7 +71,7 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
             Text(
               'CHRONICLE',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.mutedInk,
+                color: AppTheme.darkGray,
                 letterSpacing: 2.2,
                 fontWeight: FontWeight.w800,
               ),
@@ -107,7 +107,7 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
                         child: Text(
                           'DAY ${puzzle.dayNumber} · TRIAL',
                           style: const TextStyle(
-                            color: AppTheme.paleText,
+                            color: AppTheme.offWhite,
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.4,
@@ -122,14 +122,14 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: puzzle.completed ? AppTheme.inkBlack : AppTheme.stampRed,
+                                color: puzzle.completed ? AppTheme.inkBlack : AppTheme.accentOrange,
                                 width: 1.2,
                               ),
                             ),
                             child: Text(
                               puzzle.completed ? '✓ COMPLETE' : '⏱ $_timeDisplay REMAINING',
                               style: TextStyle(
-                                color: puzzle.completed ? AppTheme.inkBlack : AppTheme.stampRed,
+                                color: puzzle.completed ? AppTheme.inkBlack : AppTheme.accentOrange,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 1.1,
@@ -153,12 +153,12 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
                       children: [
                         Row(
                           children: [
-                            Container(width: 4, height: 16, color: AppTheme.stampRed),
+                            Container(width: 4, height: 16, color: AppTheme.accentOrange),
                             const SizedBox(width: 8),
                             Text(
                               'TARGET DISCOVERY',
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: AppTheme.paleText.withValues(alpha: 0.6),
+                                color: AppTheme.offWhite.withValues(alpha: 0.6),
                                 letterSpacing: 1.6,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -182,7 +182,7 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
                               Text(
                                 puzzle.target.name,
                                 style: theme.textTheme.titleLarge?.copyWith(
-                                  color: AppTheme.paleText,
+                                  color: AppTheme.offWhite,
                                   fontSize: 26,
                                 ),
                               ),
@@ -193,7 +193,7 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
                         Text(
                           'STARTING AGENTS',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppTheme.paleText.withValues(alpha: 0.6),
+                            color: AppTheme.offWhite.withValues(alpha: 0.6),
                             letterSpacing: 1.4,
                             fontWeight: FontWeight.w800,
                           ),
@@ -210,12 +210,12 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                           decoration: BoxDecoration(
-                            border: Border.all(color: AppTheme.darkHairline, width: 1),
+                            border: Border.all(color: AppTheme.mediumGray, width: 1),
                           ),
                           child: Text(
                             puzzle.completed ? '✓ PUZZLE SOLVED' : 'PROGRESS: Combine to reach target',
                             style: TextStyle(
-                              color: puzzle.completed ? AppTheme.inkBlack : AppTheme.sepiaGold,
+                              color: puzzle.completed ? AppTheme.inkBlack : AppTheme.accentOrange,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.1,
                               fontSize: 12,
@@ -236,7 +236,7 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 18),
-                        color: AppTheme.stampRed,
+                        color: AppTheme.accentOrange,
                         alignment: Alignment.center,
                         child: const Text(
                           'COMMENCE EXPERIMENT →',
@@ -262,7 +262,7 @@ class _DailyPuzzleScreenState extends State<DailyPuzzleScreen> with TickerProvid
                         child: const Text(
                           'RESET & TRY AGAIN',
                           style: TextStyle(
-                            color: AppTheme.paleText,
+                            color: AppTheme.offWhite,
                             fontSize: 14,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.6,

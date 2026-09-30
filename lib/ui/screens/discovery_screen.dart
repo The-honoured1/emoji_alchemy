@@ -65,7 +65,7 @@ class DiscoveryScreen extends StatelessWidget {
             Text(
               'FORMULATION',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.mutedInk,
+                color: AppTheme.darkGray,
                 letterSpacing: 2.2,
                 fontWeight: FontWeight.w800,
               ),
@@ -92,12 +92,12 @@ class DiscoveryScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppTheme.stampRed, width: 1.2),
+                      border: Border.all(color: AppTheme.accentOrange, width: 1.2),
                     ),
                     child: Text(
                       element.category.name.toUpperCase(),
                       style: const TextStyle(
-                        color: AppTheme.stampRed,
+                        color: AppTheme.accentOrange,
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 2.0,
@@ -119,7 +119,7 @@ class DiscoveryScreen extends StatelessWidget {
                     element.name,
                     style: theme.textTheme.displayLarge?.copyWith(
                       fontSize: 32,
-                      color: AppTheme.paleText,
+                      color: AppTheme.offWhite,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -127,7 +127,7 @@ class DiscoveryScreen extends StatelessWidget {
                   Text(
                     'Recorded in the Great Alchemical Codex.',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppTheme.paleText.withValues(alpha: 0.6),
+                      color: AppTheme.offWhite.withValues(alpha: 0.6),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -153,7 +153,7 @@ class DiscoveryScreen extends StatelessWidget {
                     Text(
                       '${recipes.length} known recipes synthesize ${element.name}.',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppTheme.mutedInk,
+                        color: AppTheme.darkGray,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -180,7 +180,7 @@ class DiscoveryScreen extends StatelessWidget {
                         Text(
                           hint.badge.toUpperCase(),
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppTheme.stampRed,
+                            color: AppTheme.accentOrange,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.2,
                           ),
@@ -216,7 +216,7 @@ class DiscoveryScreen extends StatelessWidget {
                     ? [
                         Text(
                           'All immediate combinations for ${element.name} recorded. Synthesize rarer reagents to proceed.',
-                          style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.mutedInk),
+                          style: theme.textTheme.bodySmall?.copyWith(color: AppTheme.darkGray),
                         ),
                       ]
                     : unlocks.map((combo) {
@@ -241,7 +241,7 @@ class DiscoveryScreen extends StatelessWidget {
                               Text(
                                 result.name.toUpperCase(),
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: AppTheme.stampRed,
+                                  color: AppTheme.accentOrange,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 0.8,
                                 ),
@@ -266,7 +266,7 @@ class DiscoveryScreen extends StatelessWidget {
                 child: const Text(
                   'RETURN TO LAB →',
                   style: TextStyle(
-                    color: AppTheme.paleText,
+                    color: AppTheme.offWhite,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.6,
                     fontSize: 13,
@@ -315,7 +315,7 @@ class _SectionCard extends StatelessWidget {
             title,
             style: theme.textTheme.bodySmall?.copyWith(
               letterSpacing: 1.6,
-              color: AppTheme.mutedInk,
+              color: AppTheme.darkGray,
               fontWeight: FontWeight.w800,
               fontSize: 11,
             ),
