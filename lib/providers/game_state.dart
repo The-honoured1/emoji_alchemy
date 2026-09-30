@@ -581,7 +581,7 @@ class GameState extends ChangeNotifier {
       if (savedTargetId != null) {
         final target = ElementData.elements[savedTargetId]!;
         final startIds = _prefs.getStringList('puzzleStartIds') ?? [];
-        final startingElements = startIds.map((id) => ElementData.elements[id]!).where((e) => e != null).toList();
+        final startingElements = startIds.map((id) => ElementData.elements[id]!).toList();
         final solutionPath = _prefs.getStringList('puzzleSolutionPath') ?? [];
 
         _dailyPuzzle = DailyPuzzle(

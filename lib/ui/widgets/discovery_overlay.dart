@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../providers/game_state.dart';
 import '../../theme/app_theme.dart';
-import '../screens/discovery_screen.dart';
 
 class DiscoveryOverlay extends StatelessWidget {
   final CombinationOutcome outcome;
