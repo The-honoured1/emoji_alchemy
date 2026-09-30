@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../providers/game_state.dart';
+import '../../theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
 import 'codex_screen.dart';
 import 'game_screen.dart';
@@ -14,8 +15,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cardColor = theme.cardColor;
-    final accent = theme.colorScheme.secondary;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -23,171 +22,138 @@ class HomeScreen extends StatelessWidget {
         builder: (context, gameState, child) {
           return SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // ── Masthead ─────────────────────────────────────────────
                   Text(
                     'THE GREAT LAB',
-                    style: theme.textTheme.bodySmall?.copyWith(letterSpacing: 1.5, color: const Color(0xFF7A5D42)),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppTheme.mutedInk,
+                      letterSpacing: 2.2,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.end,
-                    spacing: 8,
-                    children: [
-                      Text(
-                        'Emoji',
-                        style: theme.textTheme.displayLarge,
-                      ),
-                      Text(
-                        'Alchemy',
-                        style: theme.textTheme.displayLarge?.copyWith(color: accent),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(color: const Color(0xFFB89672), width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 14,
-                          offset: const Offset(0, 10),
+                  const SizedBox(height: 6),
+                  RichText(
+                    text: TextSpan(
+                      style: theme.textTheme.displayLarge,
+                      children: const [
+                        TextSpan(text: 'Emoji\n'),
+                        TextSpan(
+                          text: 'Alchemy',
+                          style: TextStyle(color: AppTheme.stampRed),
                         ),
                       ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                  ),
+
+                  const SizedBox(height: 6),
+                  // thin rule
+                  Container(height: 1, color: AppTheme.inkBlack),
+                  const SizedBox(height: 28),
+
+                  // ── Daily card ───────────────────────────────────────────
+                  _DailyCard(accent: AppTheme.stampRed, theme: theme, context: context),
+
+                  const SizedBox(height: 20),
+
+                  // ── Progress band ────────────────────────────────────────
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppTheme.inkBlack, width: 1.5),
+                    ),
+                    child: Row(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'TODAY · DAY 142',
-                              style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFFD2B692), letterSpacing: 1.2),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF4A382C),
-                                borderRadius: BorderRadius.circular(16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Chris_Alch · Sage',
+                                style: theme.textTheme.titleMedium,
                               ),
-                              child: Text(
-                                '3 hints',
-                                style: theme.textTheme.bodySmall?.copyWith(color: Colors.white),
+                              const SizedBox(height: 10),
+                              // Ink-bar progress
+                              Stack(
+                                children: [
+                                  Container(height: 6, color: AppTheme.paperWarm),
+                                  FractionallySizedBox(
+                                    widthFactor: gameState.discoveriesCount / gameState.maxDiscoveries,
+                                    child: Container(height: 6, color: AppTheme.inkBlack),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 8),
+                              Text(
+                                '${gameState.discoveriesCount} / ${gameState.maxDiscoveries} discovered',
+                                style: theme.textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(width: 16),
                         Text(
-                          'Steam Engine Run',
-                          style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontSize: 28),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Reach 🔥 + 💧 in 6 steps',
-                          style: theme.textTheme.bodyMedium?.copyWith(color: const Color(0xFFCEB292)),
-                        ),
-                        const SizedBox(height: 26),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => const GameScreen()),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: accent,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            ),
-                            child: const Icon(Icons.arrow_forward),
+                          '${gameState.completionPercent}%',
+                          style: theme.textTheme.displayLarge?.copyWith(
+                            fontSize: 42,
+                            color: AppTheme.stampRed,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
                       ],
                     ),
-                  ).animate().fadeIn(duration: 600.ms),
+                  ).animate().fadeIn(duration: 400.ms),
 
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                    decoration: BoxDecoration(
-                      color: theme.canvasColor,
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(color: const Color(0xFFD7B78E), width: 1.4),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          'Chris_Alch · Sage',
-                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF4A3726)),
-                        ),
-                        const SizedBox(height: 10),
-                        LinearProgressIndicator(
-                          value: gameState.discoveriesCount / gameState.maxDiscoveries,
-                          backgroundColor: Colors.white70,
-                          color: accent,
-                          minHeight: 10,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          '${gameState.discoveriesCount} / ${gameState.maxDiscoveries} discovered',
-                          style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF5E4A3D)),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 20),
 
-                  const SizedBox(height: 24),
-                  Wrap(
-                    spacing: 16,
-                    runSpacing: 16,
+                  // ── Quick-action tiles ────────────────────────────────────
+                  Row(
                     children: [
-                      _ActionTile(
-                        icon: Icons.science,
-                        label: 'Sandbox',
-                        onTap: () {
-                          Navigator.of(context).push(
+                      Expanded(
+                        child: _ActionTile(
+                          label: 'SANDBOX',
+                          sub: 'Free play',
+                          onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const GameScreen()),
-                          );
-                        },
+                          ),
+                        ),
                       ),
-                      _ActionTile(
-                        icon: Icons.calendar_today,
-                        label: 'Daily',
-                        onTap: () {
-                          Navigator.of(context).push(
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _ActionTile(
+                          label: 'DAILY',
+                          sub: 'Day 142',
+                          onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const DailyPuzzleScreen()),
-                          );
-                        },
+                          ),
+                        ),
                       ),
-                      _ActionTile(
-                        icon: Icons.book,
-                        label: 'Codex',
-                        onTap: () {
-                          Navigator.of(context).push(
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _ActionTile(
+                          label: 'CODEX',
+                          sub: 'All elements',
+                          onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const CodexScreen()),
-                          );
-                        },
+                          ),
+                        ),
                       ),
-                      _ActionTile(
-                        icon: Icons.person,
-                        label: 'Profile',
-                        onTap: () {
-                          Navigator.of(context).push(
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _ActionTile(
+                          label: 'PROFILE',
+                          sub: 'Your stats',
+                          onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                          );
-                        },
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -222,12 +188,108 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+class _DailyCard extends StatelessWidget {
+  final Color accent;
+  final ThemeData theme;
+  final BuildContext context;
+
+  const _DailyCard({required this.accent, required this.theme, required this.context});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const GameScreen()),
+      ),
+      child: Container(
+        decoration: const BoxDecoration(color: AppTheme.inkBlack),
+        child: Stack(
+          children: [
+            // Decorative side stamp line
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(width: 5, color: AppTheme.stampRed),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 22, 22, 22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'TODAY · DAY 142',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppTheme.paleText.withValues(alpha: 0.55),
+                          letterSpacing: 1.8,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppTheme.stampRed, width: 1.2),
+                        ),
+                        child: Text(
+                          '3 HINTS',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.stampRed,
+                            letterSpacing: 1.4,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Steam Engine Run',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: AppTheme.paleText,
+                      fontSize: 26,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Reach 🔥 + 💧 in 6 steps',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.paleText.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      color: AppTheme.stampRed,
+                      child: Text(
+                        'START →',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.6,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ).animate().fadeIn(duration: 500.ms),
+    );
+  }
+}
+
 class _ActionTile extends StatelessWidget {
-  final IconData icon;
   final String label;
+  final String sub;
   final VoidCallback onTap;
 
-  const _ActionTile({required this.icon, required this.label, required this.onTap});
+  const _ActionTile({required this.label, required this.sub, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -235,22 +297,32 @@ class _ActionTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: (MediaQuery.of(context).size.width - 88) / 2,
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
         decoration: BoxDecoration(
-          color: theme.canvasColor,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: const Color(0xFFD7B78E), width: 1),
+          border: Border.all(color: AppTheme.inkBlack, width: 1.5),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: const Color(0xFF8A4F2B), size: 28),
-            const SizedBox(height: 12),
-            Text(label, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+            Text(
+              label,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppTheme.inkBlack,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.8,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              sub,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppTheme.mutedInk,
+                letterSpacing: 0.4,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-

@@ -6,6 +6,7 @@ import '../../data/element_data.dart';
 import '../../models/emoji_element.dart';
 import '../../models/placed_element.dart';
 import '../../providers/game_state.dart';
+import '../../theme/app_theme.dart';
 import 'discovery_overlay.dart';
 import 'emoji_bubble.dart';
 
@@ -31,8 +32,7 @@ class CanvasArea extends StatefulWidget {
 }
 
 class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
-  final TransformationController _transformationController =
-      TransformationController();
+  final TransformationController _transformationController = TransformationController();
   final double _canvasSize = 5000;
   final double _bubbleSize = 82;
   final double _previewThreshold = 128;
@@ -65,24 +65,13 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
     }
   }
 
-  _CombinePreview? _findPreview(
-    GameState gameState,
-    String dragId,
-    double x,
-    double y,
-  ) {
+  _CombinePreview? _findPreview(GameState gameState, String dragId, double x, double y) {
     _CombinePreview? closest;
-    final dragged = gameState.canvasElements.firstWhere(
-      (placed) => placed.id == dragId,
-    );
+    final dragged = gameState.canvasElements.firstWhere((placed) => placed.id == dragId);
 
     for (final element in gameState.canvasElements) {
       if (element.id == dragId) continue;
-
-      final combo = gameState.combinationForElements(
-        dragged.element.id,
-        element.element.id,
-      );
+      final combo = gameState.combinationForElements(dragged.element.id, element.element.id);
       if (combo == null) continue;
 
       final dx = (element.x + _bubbleSize / 2) - (x + _bubbleSize / 2);
@@ -100,7 +89,6 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
         );
       }
     }
-
     return closest;
   }
 
@@ -113,24 +101,13 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
     );
   }
 
-  void _attemptLiveCombination(
-    GameState gameState,
-    String dragId,
-    double x,
-    double y,
-  ) {
+  void _attemptLiveCombination(GameState gameState, String dragId, double x, double y) {
     final preview = _findPreview(gameState, dragId, x, y);
     _setPreview(preview);
 
     if (preview == null || preview.distance > _combineThreshold) return;
 
-    final outcome = gameState.attemptCombination(
-      preview.dragId,
-      preview.targetId,
-      x,
-      y,
-    );
-
+    final outcome = gameState.attemptCombination(preview.dragId, preview.targetId, x, y);
     _draggingId = null;
     _setPreview(null);
 
@@ -150,34 +127,23 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
 
   Widget _buildPreviewBanner(ThemeData theme) {
     if (_preview == null) {
+      // Idle hint — ink bar at top
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8F0E1).withValues(alpha: 0.96),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFD4B48A), width: 1.1),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x12000000),
-              blurRadius: 18,
-              offset: Offset(0, 8),
-            ),
-          ],
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: const BoxDecoration(
+          color: AppTheme.inkBlack,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.auto_awesome_motion_rounded,
-              size: 18,
-              color: Color(0xFF8A4F2B),
-            ),
-            const SizedBox(width: 8),
+            Container(width: 3, height: 14, color: AppTheme.stampRed),
+            const SizedBox(width: 10),
             Text(
-              'Slide elements together. A loose overlap is enough to mix.',
+              'Drag elements together to mix',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF6B523D),
-                fontWeight: FontWeight.w600,
+                color: AppTheme.paleText,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
               ),
             ),
           ],
@@ -185,50 +151,44 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
       );
     }
 
+    // Active combination preview
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF2E241A).withValues(alpha: 0.96),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xFFE1B26C), width: 1.3),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x29000000),
-            blurRadius: 22,
-            offset: Offset(0, 10),
-          ),
-        ],
+        color: AppTheme.stampRed,
+        border: Border.all(color: AppTheme.inkBlack, width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.bolt_rounded, color: Color(0xFFF1C27D), size: 18),
-          const SizedBox(width: 10),
+          const Icon(Icons.bolt_rounded, color: Colors.white, size: 16),
+          const SizedBox(width: 8),
           Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Combination ready',
+                'COMBINATION READY',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: const Color(0xFFF6ECDD),
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.8,
+                  color: Colors.white.withValues(alpha: 0.75),
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.4,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
-                'Release nearby to make ${_preview!.result.name}',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFFF1C27D),
-                  fontWeight: FontWeight.w600,
+                'Release → ${_preview!.result.name}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
                 ),
               ),
             ],
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 180.ms).slideY(begin: -0.25, duration: 180.ms);
+    ).animate().fadeIn(duration: 160.ms).slideY(begin: -0.3, duration: 160.ms);
   }
 
   @override
@@ -255,6 +215,7 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
         return ClipRect(
           child: Stack(
             children: [
+              // ── Canvas world ─────────────────────────────────────────────
               InteractiveViewer(
                 transformationController: _transformationController,
                 boundaryMargin: EdgeInsets.all(_canvasSize),
@@ -266,68 +227,13 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
                   height: _canvasSize,
                   child: Stack(
                     children: [
+                      // Rice-paper background: cream + fine dot grid
                       Positioned.fill(
-                        child: DecoratedBox(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFFFCF5EA),
-                                Color(0xFFF4E3CB),
-                                Color(0xFFEEDBC0),
-                              ],
-                            ),
-                          ),
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                child: Opacity(
-                                  opacity: 0.12,
-                                  child: GridPaper(
-                                    color: const Color(0xFFB98E60),
-                                    interval: 108,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 120,
-                                right: 160,
-                                child: Container(
-                                  width: 180,
-                                  height: 180,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        Color(0x26D79C55),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 220,
-                                left: 140,
-                                child: Container(
-                                  width: 220,
-                                  height: 220,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        Color(0x1FAE6C3F),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        child: CustomPaint(
+                          painter: _DotGridPainter(),
                         ),
                       ),
+                      // Elements
                       Consumer<GameState>(
                         builder: (context, gameState, child) {
                           final orderedElements = [...gameState.canvasElements];
@@ -347,7 +253,6 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
                                 size: _bubbleSize,
                                 highlighted: isPreviewed,
                                 compactLabel: true,
-                                accentColor: const Color(0xFFE1B26C),
                               );
 
                               return Positioned(
@@ -359,47 +264,27 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
                                       _draggingId = placed.id;
                                     });
                                   },
-                                  onPanUpdate: (dragDetails) =>
-                                      _handlePanUpdate(placed, dragDetails),
+                                  onPanUpdate: (d) => _handlePanUpdate(placed, d),
                                   onPanEnd: (_) {
-                                    setState(() {
-                                      _draggingId = null;
-                                    });
+                                    setState(() { _draggingId = null; });
                                     _setPreview(null);
                                   },
                                   onPanCancel: () {
-                                    setState(() {
-                                      _draggingId = null;
-                                    });
+                                    setState(() { _draggingId = null; });
                                     _setPreview(null);
                                   },
                                   child: AnimatedScale(
-                                    duration: const Duration(milliseconds: 140),
-                                    scale: isDragging
-                                        ? 1.08
-                                        : (isPreviewed ? 1.03 : 1),
+                                    duration: const Duration(milliseconds: 120),
+                                    scale: isDragging ? 1.1 : (isPreviewed ? 1.04 : 1.0),
                                     child: bubble
                                         .animate(
-                                          onPlay: (controller) =>
-                                              controller.repeat(reverse: true),
+                                          onPlay: (c) => c.repeat(reverse: true),
                                         )
                                         .moveY(
-                                          begin: -2,
-                                          end: 3,
-                                          delay: Duration(
-                                            milliseconds:
-                                                (placed.element.name.length %
-                                                    5) *
-                                                140,
-                                          ),
-                                          duration:
-                                              (1800 +
-                                                      (placed
-                                                              .element
-                                                              .name
-                                                              .length *
-                                                          40))
-                                                  .ms,
+                                          begin: -1.5,
+                                          end: 2.5,
+                                          delay: Duration(milliseconds: (placed.element.name.length % 5) * 130),
+                                          duration: (1900 + (placed.element.name.length * 35)).ms,
                                           curve: Curves.easeInOut,
                                         ),
                                   ),
@@ -413,34 +298,31 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+
+              // ── Preview banner ───────────────────────────────────────────
               Positioned(
                 top: 14,
                 left: 14,
                 right: 14,
                 child: Center(child: _buildPreviewBanner(theme)),
               ),
+
+              // ── Help hint ────────────────────────────────────────────────
               Positioned(
-                left: 16,
-                bottom: 16,
+                left: 0,
+                right: 0,
+                bottom: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.82),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: const Color(0xFFD7B78E),
-                      width: 1,
-                    ),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  color: AppTheme.inkBlack.withValues(alpha: 0.88),
                   child: Text(
-                    'Pinch to zoom • Drag to overlap • Instant mix when a recipe matches',
+                    'Pinch to zoom  ·  Drag to overlap  ·  Recipes match automatically',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF6A5039),
-                      fontWeight: FontWeight.w600,
+                      color: AppTheme.paleText.withValues(alpha: 0.65),
+                      fontSize: 11,
+                      letterSpacing: 0.4,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -450,4 +332,27 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
       },
     );
   }
+}
+
+/// Draws a rice-paper dot grid over the warm cream background.
+class _DotGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Fill
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      Paint()..color = AppTheme.paperCream,
+    );
+    // Dots
+    final dot = Paint()..color = AppTheme.inkBlack.withValues(alpha: 0.08);
+    const spacing = 32.0;
+    for (double x = 0; x < size.width; x += spacing) {
+      for (double y = 0; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), 1.2, dot);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DotGridPainter oldDelegate) => false;
 }

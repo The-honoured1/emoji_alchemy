@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/emoji_element.dart';
+import '../../theme/app_theme.dart';
 
 class EmojiBubble extends StatelessWidget {
   final EmojiElement element;
@@ -21,39 +22,38 @@ class EmojiBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = Theme.of(context).dividerColor;
-    final glowColor = accentColor ?? Theme.of(context).colorScheme.secondary;
+    final stamp = accentColor ?? AppTheme.stampRed;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 220),
-      curve: Curves.easeOutCubic,
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: highlighted
-            ? const Color(0xFF3A2B20)
-            : Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(size * 0.3),
+        // Flat fill — ink stamp on paper feel
+        color: highlighted ? AppTheme.inkBlack : AppTheme.paperWarm,
+        // Sharp corners — no rounded pills
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: highlighted ? glowColor : borderColor,
-          width: highlighted ? 2.6 : 2,
+          color: highlighted ? stamp : AppTheme.inkBlack,
+          width: highlighted ? 2.5 : 2,
         ),
-        gradient: highlighted
-            ? const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF4C3726), Color(0xFF2A1E15)],
-              )
-            : null,
-        boxShadow: [
-          BoxShadow(
-            color: highlighted
-                ? glowColor.withValues(alpha: 0.28)
-                : const Color(0x1F000000),
-            blurRadius: highlighted ? 18 : 10,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        // Hard offset shadow = rubber-stamp impression
+        boxShadow: highlighted
+            ? [
+                BoxShadow(
+                  color: stamp.withValues(alpha: 0.35),
+                  blurRadius: 0,
+                  offset: const Offset(3, 3),
+                ),
+              ]
+            : [
+                const BoxShadow(
+                  color: Color(0x33000000),
+                  blurRadius: 0,
+                  offset: Offset(2, 2),
+                ),
+              ],
       ),
       alignment: Alignment.center,
       child: Column(
@@ -61,21 +61,22 @@ class EmojiBubble extends StatelessWidget {
         children: [
           Text(
             element.emoji,
-            style: TextStyle(fontSize: compactLabel ? size * 0.44 : size * 0.4),
+            style: TextStyle(fontSize: compactLabel ? size * 0.44 : size * 0.40),
           ),
-          if (showLabel && size >= 80) SizedBox(height: compactLabel ? 4 : 6),
+          if (showLabel && size >= 80) SizedBox(height: compactLabel ? 2 : 4),
           if (showLabel && size >= 80)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
-                element.name,
+                element.name.toUpperCase(),
                 maxLines: 1,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: compactLabel ? 9 : 10,
-                  color: const Color(0xFFF2E7D6),
-                  fontWeight: highlighted ? FontWeight.w700 : FontWeight.w500,
-                  letterSpacing: compactLabel ? 0.1 : 0,
+                  fontSize: compactLabel ? 8 : 9,
+                  color: highlighted ? AppTheme.paleText : AppTheme.inkBlack,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.6,
+                  fontFamily: 'Georgia',
                 ),
                 overflow: TextOverflow.ellipsis,
               ),

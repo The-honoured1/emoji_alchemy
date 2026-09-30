@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/element_category.dart';
 import '../../providers/game_state.dart';
+import '../../theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
 import '../widgets/emoji_bubble.dart';
 
@@ -16,11 +17,11 @@ class _CodexScreenState extends State<CodexScreen> {
   ElementCategory? selectedCategory;
 
   final List<Map<String, dynamic>> _filters = [
-    {'label': 'All', 'category': null},
-    {'label': 'Nature', 'category': ElementCategory.nature},
-    {'label': 'Tech', 'category': ElementCategory.technology},
-    {'label': 'Magic', 'category': ElementCategory.magic},
-    {'label': 'Space', 'category': ElementCategory.space},
+    {'label': 'ALL', 'category': null},
+    {'label': 'NATURE', 'category': ElementCategory.nature},
+    {'label': 'TECH', 'category': ElementCategory.technology},
+    {'label': 'MAGIC', 'category': ElementCategory.magic},
+    {'label': 'SPACE', 'category': ElementCategory.space},
   ];
 
   @override
@@ -31,98 +32,165 @@ class _CodexScreenState extends State<CodexScreen> {
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        title: const Text('Codex', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: false,
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).maybePop(),
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppTheme.inkBlack, width: 1.5),
+              ),
+              child: const Icon(Icons.arrow_back, size: 16, color: AppTheme.inkBlack),
+            ),
+          ),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'CODEX',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppTheme.mutedInk,
+                letterSpacing: 2.2,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text('All Elements', style: theme.textTheme.titleMedium),
+          ],
+        ),
       ),
       body: Consumer<GameState>(
         builder: (context, gameState, child) {
           final discovered = gameState.discoveredElementList
-              .where((element) => selectedCategory == null || element.category == selectedCategory)
+              .where((e) => selectedCategory == null || e.category == selectedCategory)
               .toList()
             ..sort((a, b) => a.name.compareTo(b.name));
 
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ── Divider ────────────────────────────────────────────────
+              Container(height: 1.5, color: AppTheme.inkBlack),
+
+              // ── Stats bar ──────────────────────────────────────────────
+              Container(
+                color: AppTheme.inkBlack,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'All',
-                      style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF7A5D42), letterSpacing: 1.5),
+                      '${gameState.discoveriesCount} discovered',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppTheme.paleText.withValues(alpha: 0.6),
+                        letterSpacing: 0.8,
+                      ),
                     ),
                     Text(
                       '${gameState.discoveriesCount} / ${gameState.maxDiscoveries}',
-                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: AppTheme.stampRed,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 18),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+              ),
+
+              // ── Filters ────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: _filters.map((filter) {
                     final isSelected = selectedCategory == filter['category'];
-                    return ChoiceChip(
-                      label: Text(filter['label']),
-                      selected: isSelected,
-                      selectedColor: theme.colorScheme.secondary.withValues(alpha: 0.16),
-                      backgroundColor: theme.canvasColor,
-                      labelStyle: TextStyle(
-                        color: isSelected ? theme.colorScheme.secondary : const Color(0xFF5E4A3D),
-                        fontWeight: FontWeight.w600,
+                    return GestureDetector(
+                      onTap: () => setState(() => selectedCategory = filter['category']),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppTheme.inkBlack : Colors.transparent,
+                          border: Border.all(
+                            color: isSelected ? AppTheme.inkBlack : AppTheme.hairline,
+                            width: 1.2,
+                          ),
+                        ),
+                        child: Text(
+                          filter['label'],
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isSelected ? AppTheme.paleText : AppTheme.mutedInk,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.4,
+                          ),
+                        ),
                       ),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                      onSelected: (_) {
-                        setState(() {
-                          selectedCategory = filter['category'];
-                        });
-                      },
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 18),
-                Expanded(
-                  child: discovered.isEmpty
-                      ? Center(
-                          child: Text(
-                            'No discoveries yet in this category.',
-                            style: theme.textTheme.bodyMedium?.copyWith(color: const Color(0xFF7A5D42)),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      : GridView.count(
-                          crossAxisCount: 3,
-                          childAspectRatio: 0.88,
-                          crossAxisSpacing: 14,
-                          mainAxisSpacing: 14,
-                          children: discovered.map((element) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: theme.cardColor,
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(color: theme.dividerColor, width: 1.2),
+              ),
+
+              const SizedBox(height: 14),
+
+              // ── Grid ───────────────────────────────────────────────────
+              Expanded(
+                child: discovered.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 1.5,
+                              color: AppTheme.hairline,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No discoveries yet.',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AppTheme.mutedInk,
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  EmojiBubble(element: element, size: 72),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    element.name,
-                                    style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFFF2E7D6)),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
+                            ),
+                          ],
                         ),
-                ),
-              ],
-            ),
+                      )
+                    : GridView.count(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                        crossAxisCount: 3,
+                        childAspectRatio: 0.9,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        children: discovered.map((element) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: AppTheme.inkBlack,
+                              border: Border.all(color: AppTheme.darkHairline, width: 1),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                EmojiBubble(element: element, size: 68),
+                                const SizedBox(height: 10),
+                                Text(
+                                  element.name.toUpperCase(),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: AppTheme.paleText.withValues(alpha: 0.75),
+                                    fontSize: 10,
+                                    letterSpacing: 0.6,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+              ),
+            ],
           );
         },
       ),

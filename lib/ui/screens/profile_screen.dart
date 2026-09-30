@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../data/element_data.dart';
 import '../../models/element_category.dart';
 import '../../providers/game_state.dart';
+import '../../theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -16,7 +17,33 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: false,
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).maybePop(),
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppTheme.inkBlack, width: 1.5),
+              ),
+              child: const Icon(Icons.arrow_back, size: 16, color: AppTheme.inkBlack),
+            ),
+          ),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'RECORDS',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppTheme.mutedInk,
+                letterSpacing: 2.2,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text('Alchemist Profile', style: theme.textTheme.titleMedium),
+          ],
+        ),
       ),
       body: Consumer<GameState>(
         builder: (context, gameState, child) {
@@ -27,123 +54,200 @@ class ProfileScreen extends StatelessWidget {
             ElementCategory.space,
           ];
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Container(height: 1.5, color: AppTheme.inkBlack),
+                const SizedBox(height: 20),
+
+                // Alchemist Card
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(color: theme.dividerColor, width: 1.2),
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    color: AppTheme.inkBlack,
                   ),
                   child: Row(
                     children: [
                       Container(
-                        width: 64,
-                        height: 64,
+                        width: 58,
+                        height: 58,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF4A3726),
-                          borderRadius: BorderRadius.circular(20),
+                          color: AppTheme.stampRed,
+                          border: Border.all(color: AppTheme.paleText, width: 1.5),
                         ),
-                        child: const Center(child: Text('A', style: TextStyle(fontSize: 28))),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          '錬',
+                          style: TextStyle(
+                            fontSize: 28,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Chris_Alch', style: theme.textTheme.titleLarge?.copyWith(color: const Color(0xFFF2E7D6))),
-                          const SizedBox(height: 6),
-                          Text('Sage Rank', style: theme.textTheme.bodyMedium?.copyWith(color: const Color(0xFFB89672))),
-                        ],
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4A382C),
-                          borderRadius: BorderRadius.circular(18),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Chris_Alch',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppTheme.paleText,
+                                fontSize: 20,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'RANK · SAGE MASTER',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: AppTheme.sepiaGold,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Text('EDIT', style: theme.textTheme.bodySmall?.copyWith(color: Colors.white)),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppTheme.darkHairline, width: 1.2),
+                        ),
+                        child: Text(
+                          'ACTIVE',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.paleText.withValues(alpha: 0.7),
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.1,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+
+                const SizedBox(height: 16),
+
+                // Stats Grid
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _StatCard(title: 'FOUND', value: '${gameState.discoveriesCount}'),
-                    _StatCard(title: 'COMPLETE', value: '${gameState.completionPercent}%'),
+                    _StatCard(title: 'DISCOVERIES', value: '${gameState.discoveriesCount}'),
+                    const SizedBox(width: 10),
+                    _StatCard(title: 'COMPLETION', value: '${gameState.completionPercent}%'),
                   ],
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _StatCard(title: 'DAY STREAK', value: '${gameState.currentStreak}'),
-                    _StatCard(title: 'RAREST', value: gameState.rarestElement.emoji),
+                    const SizedBox(width: 10),
+                    _StatCard(title: 'RAREST ELEMENT', value: gameState.rarestElement.emoji),
                   ],
                 ),
-                const SizedBox(height: 22),
-                Text('CATEGORY PROGRESS', style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF7A5D42), letterSpacing: 1.4)),
-                const SizedBox(height: 16),
+
+                const SizedBox(height: 24),
+                Text(
+                  'CATEGORY DISCOVERY',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppTheme.mutedInk,
+                    letterSpacing: 1.8,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
                 ...categories.map((category) {
                   final discovered = gameState.discoveredByCategory[category] ?? 0;
-                  final total = ElementData.elements.values.where((element) => element.category == category).length;
+                  final total = ElementData.elements.values
+                      .where((element) => element.category == category)
+                      .length;
                   final percent = total == 0 ? 0.0 : discovered / total;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppTheme.inkBlack, width: 1.2),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(_categoryLabel(category), style: theme.textTheme.bodyMedium?.copyWith(color: const Color(0xFF4A3726), fontWeight: FontWeight.w600)),
-                            Text('${(percent * 100).round()}%', style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF7A5D42))),
+                            Text(
+                              _categoryLabel(category).toUpperCase(),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: AppTheme.inkBlack,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            Text(
+                              '$discovered / $total (${(percent * 100).round()}%)',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: AppTheme.stampRed,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: LinearProgressIndicator(
-                            value: percent,
-                            minHeight: 10,
-                            backgroundColor: const Color(0xFFEEE0D2),
-                            color: category == ElementCategory.nature
-                                ? const Color(0xFF6A8C44)
-                                : category == ElementCategory.technology
-                                    ? const Color(0xFF4A6F8C)
-                                    : category == ElementCategory.magic
-                                        ? const Color(0xFFB06B33)
-                                        : const Color(0xFF8B5B8A),
-                          ),
+                        Stack(
+                          children: [
+                            Container(height: 6, color: AppTheme.paperWarm),
+                            FractionallySizedBox(
+                              widthFactor: percent,
+                              child: Container(height: 6, color: AppTheme.inkBlack),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   );
                 }),
-                const Spacer(),
-                Text('THIS WEEK', style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF7A5D42), letterSpacing: 1.4)),
+
+                const SizedBox(height: 16),
+                Text(
+                  'WEEKLY ARCHIVE',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppTheme.mutedInk,
+                    letterSpacing: 1.8,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: 'MTWTFSS'.split('').map((day) {
+                  children: 'MTWTFSS'.split('').asMap().entries.map((entry) {
+                    final day = entry.value;
+                    final isHighlighted = entry.key >= 5;
                     return Container(
-                      width: 32,
-                      height: 42,
+                      width: 40,
+                      height: 44,
                       decoration: BoxDecoration(
-                        color: day == 'S' ? const Color(0xFF4A382C) : theme.canvasColor,
-                        borderRadius: BorderRadius.circular(12),
+                        color: isHighlighted ? AppTheme.stampRed : Colors.transparent,
+                        border: Border.all(
+                          color: isHighlighted ? AppTheme.stampRed : AppTheme.inkBlack,
+                          width: 1.2,
+                        ),
                       ),
                       alignment: Alignment.center,
-                      child: Text(day, style: theme.textTheme.bodyMedium?.copyWith(color: day == 'S' ? Colors.white : const Color(0xFF4A3726))),
+                      child: Text(
+                        day,
+                        style: TextStyle(
+                          color: isHighlighted ? Colors.white : AppTheme.inkBlack,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                          fontFamily: 'Georgia',
+                        ),
+                      ),
                     );
                   }).toList(),
                 ),
+                const SizedBox(height: 24),
               ],
             ),
           );
@@ -169,8 +273,6 @@ class ProfileScreen extends StatelessWidget {
         return 'Magic';
       case ElementCategory.space:
         return 'Space';
-      default:
-        return category.name;
     }
   }
 
@@ -191,19 +293,31 @@ class _StatCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Theme.of(context).canvasColor,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: theme.dividerColor, width: 1.2),
+          border: Border.all(color: AppTheme.inkBlack, width: 1.2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: theme.textTheme.bodySmall?.copyWith(color: const Color(0xFF7A5D42), letterSpacing: 1.1)),
-            const SizedBox(height: 10),
-            Text(value, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF3C2E24))),
+            Text(
+              title,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppTheme.mutedInk,
+                letterSpacing: 1.1,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: AppTheme.inkBlack,
+                fontSize: 22,
+              ),
+            ),
           ],
         ),
       ),

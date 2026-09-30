@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../providers/game_state.dart';
+import '../../theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
 import '../widgets/canvas_area.dart';
 import '../widgets/collection_tray.dart';
@@ -28,9 +29,22 @@ class GameScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
           child: Column(
             children: [
+              // ── Header ──────────────────────────────────────────────────
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Back arrow
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).maybePop(),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppTheme.inkBlack, width: 1.5),
+                      ),
+                      child: const Icon(Icons.arrow_back, size: 18, color: AppTheme.inkBlack),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,72 +52,52 @@ class GameScreen extends StatelessWidget {
                         Text(
                           'THE LAB',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            letterSpacing: 1.6,
-                            color: const Color(0xFF7A5D42),
-                            fontWeight: FontWeight.w700,
+                            letterSpacing: 2.2,
+                            color: AppTheme.mutedInk,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
-                        const SizedBox(height: 4),
                         Text(
                           '${gameState.discoveriesCount} discovered',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: theme.textTheme.titleMedium,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: Wrap(
-                      alignment: WrapAlignment.end,
-                      runAlignment: WrapAlignment.end,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _TopChip(
-                          label: '${gameState.hintsRemaining} hints',
-                          onTap: () =>
-                              Navigator.of(context).pushNamed('/hints'),
-                        ),
-                        _TopChip(
-                          label: 'Clear',
-                          enabled: !gameState.canvasIsEmpty,
-                          onTap: gameState.canvasIsEmpty
-                              ? null
-                              : notifier.clearCanvas,
-                        ),
-                      ],
-                    ),
+                  Wrap(
+                    alignment: WrapAlignment.end,
+                    spacing: 8,
+                    children: [
+                      _TopChip(
+                        label: '${gameState.hintsRemaining} hints',
+                        onTap: () => Navigator.of(context).pushNamed('/hints'),
+                      ),
+                      _TopChip(
+                        label: 'Clear',
+                        enabled: !gameState.canvasIsEmpty,
+                        onTap: gameState.canvasIsEmpty ? null : notifier.clearCanvas,
+                        danger: true,
+                      ),
+                    ],
                   ),
                 ],
               ).animate().fadeIn(duration: 220.ms),
+
               const SizedBox(height: 14),
+
+              // ── Canvas ──────────────────────────────────────────────────
               Expanded(
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.34),
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: const Color(0xFFD8BA91),
-                      width: 1.2,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x12000000),
-                        blurRadius: 16,
-                        offset: Offset(0, 8),
-                      ),
-                    ],
+                    color: AppTheme.paperCream,
+                    border: Border.all(color: AppTheme.inkBlack, width: 1.5),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: const CanvasArea(),
                 ).animate().fadeIn(delay: 60.ms, duration: 260.ms),
               ),
+
               const SizedBox(height: 12),
               const SizedBox(height: 92, child: CollectionTray()),
             ],
@@ -147,43 +141,50 @@ class _LabHeaderData {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(hintsRemaining, canvasIsEmpty, discoveriesCount);
+  int get hashCode => Object.hash(hintsRemaining, canvasIsEmpty, discoveriesCount);
 }
 
 class _TopChip extends StatelessWidget {
   final String label;
   final VoidCallback? onTap;
   final bool enabled;
+  final bool danger;
 
   const _TopChip({
     required this.label,
     required this.onTap,
     this.enabled = true,
+    this.danger = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final foreground = enabled ? Colors.white : const Color(0xFFD0C0AD);
-    final background = enabled
-        ? const Color(0xFF2E241A)
-        : const Color(0xFF8F7E6D);
+    final active = enabled && onTap != null;
+    final bg = !active
+        ? AppTheme.paperWarm
+        : danger
+            ? AppTheme.stampRed
+            : AppTheme.inkBlack;
+    final fg = !active
+        ? AppTheme.mutedInk
+        : Colors.white;
+    final borderColor = !active ? AppTheme.hairline : bg;
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
-      onTap: enabled ? onTap : null,
+    return GestureDetector(
+      onTap: active ? onTap : null,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.circular(20),
+          color: bg,
+          border: Border.all(color: borderColor, width: 1.2),
         ),
         child: Text(
-          label,
+          label.toUpperCase(),
           style: theme.textTheme.bodySmall?.copyWith(
-            color: foreground,
-            fontWeight: FontWeight.w700,
+            color: fg,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.2,
           ),
         ),
       ),

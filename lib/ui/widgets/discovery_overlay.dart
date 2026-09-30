@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../providers/game_state.dart';
+import '../../theme/app_theme.dart';
 import '../screens/discovery_screen.dart';
 import 'emoji_bubble.dart';
 
@@ -16,136 +17,209 @@ class DiscoveryOverlay extends StatelessWidget {
     final gameState = Provider.of<GameState>(context, listen: false);
     final hintText = gameState.unlockHintFor(outcome.result);
     final recipeText =
-        '${outcome.ingredientA.emoji} ${outcome.ingredientA.name} + '
-        '${outcome.ingredientB.emoji} ${outcome.ingredientB.name} = '
-        '${outcome.result.emoji} ${outcome.result.name}';
+        '${outcome.ingredientA.emoji} ${outcome.ingredientA.name}  +  '
+        '${outcome.ingredientB.emoji} ${outcome.ingredientB.name}';
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-                  'NEW DISCOVERY!',
-                  style: TextStyle(
-                    color: Colors.amber,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 4,
-                  ),
-                )
-                .animate()
-                .slideY(begin: -2, duration: 500.ms, curve: Curves.easeOutBack)
-                .fadeIn(),
-            const SizedBox(height: 40),
-            EmojiBubble(element: outcome.result, size: 150).animate().scale(
-              begin: const Offset(0.2, 0.2),
-              duration: 600.ms,
-              curve: Curves.elasticOut,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              outcome.result.name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-              ),
-            ).animate().fadeIn(delay: 500.ms).slideY(begin: 1),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: Text(
-                outcome.result.category.name.toUpperCase(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ).animate().fadeIn(delay: 800.ms).slideX(begin: 1),
-            const SizedBox(height: 24),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white30, width: 1.2),
-              ),
-              child: Column(
+      backgroundColor: AppTheme.inkBlack,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ── "NEW DISCOVERY" stamp ─────────────────────────────────
+              Row(
                 children: [
+                  Container(width: 4, height: 22, color: AppTheme.stampRed),
+                  const SizedBox(width: 12),
                   Text(
-                    recipeText,
+                    'NEW DISCOVERY',
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      color: AppTheme.stampRed,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 3.5,
+                      fontFamily: 'Georgia',
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    hintText,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                 ],
+              )
+                  .animate()
+                  .slideX(begin: -0.4, duration: 400.ms, curve: Curves.easeOut)
+                  .fadeIn(),
+
+              const Spacer(),
+
+              // ── Giant emoji stamp ─────────────────────────────────────
+              Center(
+                child: EmojiBubble(
+                  element: outcome.result,
+                  size: 160,
+                  highlighted: true,
+                ).animate().scale(
+                  begin: const Offset(0.1, 0.1),
+                  duration: 500.ms,
+                  curve: Curves.elasticOut,
+                ),
               ),
-            ).animate().fadeIn(delay: 1.seconds),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () => navigator.pop(),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white12,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
+
+              const SizedBox(height: 28),
+
+              // ── Element name ──────────────────────────────────────────
+              Center(
+                child: Text(
+                  outcome.result.name,
+                  style: const TextStyle(
+                    color: AppTheme.paleText,
+                    fontSize: 44,
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'Georgia',
+                    height: 1.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.4),
+              ),
+
+              const SizedBox(height: 12),
+
+              // ── Category tag ──────────────────────────────────────────
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppTheme.stampRed, width: 1.5),
+                  ),
+                  child: Text(
+                    outcome.result.category.name.toUpperCase(),
+                    style: const TextStyle(
+                      color: AppTheme.stampRed,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2.5,
+                      fontFamily: 'Georgia',
                     ),
                   ),
-                  child: const Text(
-                    'CONTINUE',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                ).animate().fadeIn(delay: 650.ms),
+              ),
+
+              const SizedBox(height: 32),
+
+              // ── Recipe ────────────────────────────────────────────────
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppTheme.darkHairline, width: 1),
                 ),
-                const SizedBox(width: 12),
-                TextButton(
-                  onPressed: () {
-                    navigator.pop();
-                    Future.microtask(() {
-                      navigator.push(
-                        MaterialPageRoute(
-                          builder: (_) => DiscoveryScreen(
-                            element: outcome.result,
-                            outcome: outcome,
+                child: Column(
+                  children: [
+                    Text(
+                      recipeText,
+                      style: const TextStyle(
+                        color: AppTheme.paleText,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Georgia',
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '= ${outcome.result.emoji} ${outcome.result.name}',
+                      style: const TextStyle(
+                        color: AppTheme.stampRed,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Georgia',
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (hintText.isNotEmpty) ...[
+                      Container(
+                        margin: const EdgeInsets.only(top: 14),
+                        height: 1,
+                        color: AppTheme.darkHairline,
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        hintText,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppTheme.paleText.withValues(alpha: 0.55),
+                          fontSize: 14,
+                          fontFamily: 'Georgia',
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ).animate().fadeIn(delay: 900.ms),
+
+              const Spacer(),
+
+              // ── Actions ───────────────────────────────────────────────
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => navigator.pop(),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppTheme.darkHairline, width: 1.2),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'CONTINUE',
+                          style: TextStyle(
+                            color: AppTheme.paleText,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.8,
+                            fontFamily: 'Georgia',
                           ),
                         ),
-                      );
-                    });
-                  },
-                  style: TextButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
+                      ),
                     ),
                   ),
-                  child: const Text(
-                    'VIEW DISCOVERY',
-                    style: TextStyle(color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        navigator.pop();
+                        Future.microtask(() {
+                          navigator.push(
+                            MaterialPageRoute(
+                              builder: (_) => DiscoveryScreen(
+                                element: outcome.result,
+                                outcome: outcome,
+                              ),
+                            ),
+                          );
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        color: AppTheme.stampRed,
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'VIEW →',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.8,
+                            fontFamily: 'Georgia',
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ).animate().fadeIn(delay: 1.5.seconds),
-          ],
+                ],
+              ).animate().fadeIn(delay: 1200.ms),
+            ],
+          ),
         ),
       ),
     );

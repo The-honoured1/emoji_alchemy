@@ -1,68 +1,92 @@
 import 'package:flutter/material.dart';
 
+/// Ink & Paper — sumi ink on warm cream, editorial weight contrast.
 class AppTheme {
-  static ThemeData get parchmentTheme {
+  // ── Palette ──────────────────────────────────────────────────────────────
+  static const Color inkBlack    = Color(0xFF1C1612); // deep sumi ink
+  static const Color inkSoft     = Color(0xFF2E2720); // slightly lifted dark
+  static const Color paperCream  = Color(0xFFF5F0E8); // main background
+  static const Color paperWarm   = Color(0xFFEADFC8); // slightly toasted
+  static const Color stampRed    = Color(0xFFB85C2C); // red seal / accent
+  static const Color sepiaGold   = Color(0xFF8B6914); // gold label accent
+  static const Color hairline    = Color(0xFFC0A882); // borders on light
+  static const Color darkHairline= Color(0xFF3D3228); // borders on dark
+  static const Color paleText    = Color(0xFFEDE5D4); // text on dark surfaces
+  static const Color mutedInk    = Color(0xFF7A6A58); // secondary on light
+
+  static ThemeData get inkPaperTheme {
     return ThemeData(
       brightness: Brightness.light,
-      primaryColor: const Color(0xFF8A4F2B),
-      scaffoldBackgroundColor: const Color(0xFFF3E7D6),
-      cardColor: const Color(0xFF2E241A),
-      canvasColor: const Color(0xFFFAF0E6),
-      dividerColor: const Color(0xFFDAC6A7),
-      highlightColor: const Color(0xFFD79C55),
-      splashColor: const Color(0x33D79C55),
-      shadowColor: Colors.black26,
+      primaryColor: inkBlack,
+      scaffoldBackgroundColor: paperCream,
+      cardColor: inkBlack,
+      canvasColor: paperWarm,
+      dividerColor: hairline,
+      highlightColor: stampRed,
+      splashColor: stampRed.withValues(alpha: 0.14),
+      shadowColor: inkBlack.withValues(alpha: 0.35),
       fontFamily: 'Georgia',
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFF3E7D6),
-        foregroundColor: Color(0xFF2E241A),
+        backgroundColor: paperCream,
+        foregroundColor: inkBlack,
         elevation: 0,
-        centerTitle: true,
+        centerTitle: false,
+        titleTextStyle: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: inkBlack,
+          fontFamily: 'Georgia',
+          letterSpacing: 0.3,
+        ),
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
-          fontSize: 36,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF2E241A),
-          letterSpacing: 0.5,
+          fontSize: 38,
+          fontWeight: FontWeight.w800,
+          color: inkBlack,
+          letterSpacing: -0.5,
           fontFamily: 'Georgia',
+          height: 1.0,
         ),
         titleLarge: TextStyle(
           fontSize: 22,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF2E241A),
+          fontWeight: FontWeight.w700,
+          color: inkBlack,
           fontFamily: 'Georgia',
         ),
         titleMedium: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF3C2E24),
+          fontSize: 17,
+          fontWeight: FontWeight.w700,
+          color: inkBlack,
           fontFamily: 'Georgia',
         ),
         bodyMedium: TextStyle(
-          fontSize: 16,
-          color: Color(0xFF3C2E24),
+          fontSize: 15,
+          color: inkBlack,
           fontFamily: 'Georgia',
+          height: 1.5,
         ),
         bodySmall: TextStyle(
-          fontSize: 14,
-          color: Color(0xFF5A4A3F),
+          fontSize: 12,
+          color: mutedInk,
           fontFamily: 'Georgia',
+          letterSpacing: 0.8,
         ),
         labelLarge: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF8A4F2B),
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+          color: stampRed,
           fontFamily: 'Georgia',
+          letterSpacing: 1.4,
         ),
       ),
       colorScheme: const ColorScheme.light(
-        primary: Color(0xFF8A4F2B),
-        secondary: Color(0xFFD79C55),
-        surface: Color(0xFFF7E8D2),
-        onPrimary: Colors.white,
-        onSecondary: Color(0xFF2E241A),
-        onSurface: Color(0xFF2E241A),
+        primary: inkBlack,
+        secondary: stampRed,
+        surface: paperCream,
+        onPrimary: paleText,
+        onSecondary: Colors.white,
+        onSurface: inkBlack,
       ),
     );
   }
