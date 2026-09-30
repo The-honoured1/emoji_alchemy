@@ -191,7 +191,7 @@ class HomeScreen extends StatelessWidget {
     final routes = [
       () => const HomeScreen(),
       () => const GameScreen(),
-      () => const CodexScreen(),
+      () => const CollectionScreen(),
       () => const ProfileScreen(),
     ];
     Navigator.of(context).pushReplacement(
