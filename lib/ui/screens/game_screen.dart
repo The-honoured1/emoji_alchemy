@@ -90,19 +90,12 @@ class GameScreen extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppTheme.paperCream,
-                    border: Border.all(color: AppTheme.inkBlack, width: 1.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.inkBlack.withValues(alpha: 0.1),
-                        blurRadius: 0,
-                        offset: const Offset(2, 2),
-                      ),
-                    ],
+                    color: AppTheme.lightGray,
+                    border: Border.all(color: AppTheme.inkBlack, width: 1),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: const CanvasArea(),
-                ).animate().fadeIn(delay: 60.ms, duration: 260.ms),
+                ),
               ),
 
               const SizedBox(height: 12),

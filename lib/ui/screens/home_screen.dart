@@ -22,146 +22,156 @@ class HomeScreen extends StatelessWidget {
         builder: (context, gameState, child) {
           return SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // ── Masthead ─────────────────────────────────────────────
+                  // ── Header ────────────────────────────────────────────
                   Text(
-                    'THE GREAT LAB',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppTheme.mutedInk,
-                      letterSpacing: 2.2,
+                    'Emoji Alchemy',
+                    style: theme.textTheme.displayLarge?.copyWith(
+                      fontSize: 42,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 6),
-                  RichText(
-                    text: TextSpan(
-                      style: theme.textTheme.displayLarge,
-                      children: const [
-                        TextSpan(text: 'Emoji\n'),
-                        TextSpan(
-                          text: 'Alchemy',
-                          style: TextStyle(color: AppTheme.stampRed),
-                        ),
-                      ],
+                  Text(
+                    'Combine elements to discover new forms.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.darkGray,
+                      fontSize: 15,
                     ),
                   ),
 
-                  const SizedBox(height: 6),
-                  // thin rule
-                  Container(height: 1, color: AppTheme.inkBlack),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 36),
 
-                  // ── Daily card ───────────────────────────────────────────
-                  _DailyCard(accent: AppTheme.stampRed, theme: theme, context: context)
-                      .animate()
-                      .fadeIn(duration: 600.ms)
-                      .slideY(begin: 0.2, duration: 600.ms, curve: Curves.easeOut),
-
-                  const SizedBox(height: 20),
-
-                  // ── Progress band ────────────────────────────────────────
+                  // ── Progress ──────────────────────────────────────────
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppTheme.inkBlack, width: 1.5),
+                      border: Border.all(color: AppTheme.mediumGray, width: 1),
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Chris_Alch · Sage',
-                                style: theme.textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 10),
-                              // Ink-bar progress
-                              Stack(
+                        Text(
+                          'Progress',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.darkGray,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(height: 6, color: AppTheme.paperWarm),
-                                  FractionallySizedBox(
-                                    widthFactor: gameState.discoveriesCount / gameState.maxDiscoveries,
-                                    child: Container(height: 6, color: AppTheme.inkBlack),
+                                  Text(
+                                    '${gameState.discoveriesCount} / ${gameState.maxDiscoveries} discovered',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    height: 3,
+                                    color: AppTheme.mediumGray,
+                                    child: FractionallySizedBox(
+                                      widthFactor: gameState.discoveriesCount / gameState.maxDiscoveries,
+                                      child: Container(color: AppTheme.accentOrange),
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${gameState.discoveriesCount} / ${gameState.maxDiscoveries} discovered',
-                                style: theme.textTheme.bodySmall,
+                            ),
+                            const SizedBox(width: 16),
+                            Text(
+                              '${gameState.completionPercent}%',
+                              style: theme.textTheme.displayLarge?.copyWith(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w700,
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          '${gameState.completionPercent}%',
-                          style: theme.textTheme.displayLarge?.copyWith(
-                            fontSize: 42,
-                            color: AppTheme.stampRed,
-                            fontWeight: FontWeight.w900,
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ).animate().fadeIn(duration: 400.ms),
-
-                  const SizedBox(height: 20),
-
-                  // ── Quick-action tiles ────────────────────────────────────
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _ActionTile(
-                          label: 'SANDBOX',
-                          sub: 'Free play',
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const GameScreen()),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _ActionTile(
-                          label: 'DAILY',
-                          sub: 'Day 142',
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const DailyPuzzleScreen()),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
-                  const SizedBox(height: 12),
-                  Row(
+
+                  const SizedBox(height: 28),
+
+                  // ── Action grid ───────────────────────────────────────
+                  GridView.count(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     children: [
-                      Expanded(
-                        child: _ActionTile(
-                          label: 'CODEX',
-                          sub: 'All elements',
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const CodexScreen()),
-                          ),
+                      _ActionButton(
+                        label: 'Play',
+                        hint: 'Free combine',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const GameScreen()),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _ActionTile(
-                          label: 'PROFILE',
-                          sub: 'Your stats',
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                          ),
+                      _ActionButton(
+                        label: 'Daily',
+                        hint: 'Day ${gameState.dailyPuzzle?.dayNumber ?? 0}',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const DailyPuzzleScreen()),
+                        ),
+                      ),
+                      _ActionButton(
+                        label: 'Codex',
+                        hint: 'All elements',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const CodexScreen()),
+                        ),
+                      ),
+                      _ActionButton(
+                        label: 'Profile',
+                        hint: 'Your stats',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ProfileScreen()),
                         ),
                       ),
                     ],
                   ),
 
                   const SizedBox(height: 28),
+
+                  // ── Rank ───────────────────────────────────────────
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppTheme.mediumGray, width: 1),
+                      color: AppTheme.lightGray,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          gameState.currentRank,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Day streak: ${gameState.currentStreak}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.darkGray,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -191,142 +201,16 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _DailyCard extends StatelessWidget {
-  final Color accent;
-  final ThemeData theme;
-  final BuildContext context;
-
-  const _DailyCard({required this.accent, required this.theme, required this.context});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const DailyPuzzleScreen()),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.inkBlack,
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.stampRed.withValues(alpha: 0.3),
-              blurRadius: 0,
-              offset: const Offset(6, 6),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            // Decorative corner accent
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: AppTheme.stampRed, width: 3),
-                    left: BorderSide(color: AppTheme.stampRed, width: 3),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 22, 22, 22),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'TODAY',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppTheme.paleText.withValues(alpha: 0.5),
-                              letterSpacing: 2.2,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Daily Trial',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              color: AppTheme.paleText,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppTheme.stampRed, width: 2),
-                          color: AppTheme.stampRed.withValues(alpha: 0.1),
-                        ),
-                        child: Text(
-                          '✨ NEW',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppTheme.stampRed,
-                            letterSpacing: 1.6,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'A fresh challenge awaits each sunrise. Discover new elements through guided synthesis.',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppTheme.paleText.withValues(alpha: 0.65),
-                      fontSize: 12,
-                      height: 1.6,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                      color: AppTheme.stampRed,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'BEGIN',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1.4,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward, color: Colors.white, size: 14),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ).animate().fadeIn(duration: 500.ms),
-    );
-  }
-}
-
-class _ActionTile extends StatelessWidget {
+class _ActionButton extends StatelessWidget {
   final String label;
-  final String sub;
+  final String hint;
   final VoidCallback onTap;
 
-  const _ActionTile({required this.label, required this.sub, required this.onTap});
+  const _ActionButton({
+    required this.label,
+    required this.hint,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -334,36 +218,27 @@ class _ActionTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 18),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: AppTheme.inkBlack, width: 1.5),
-          color: Colors.transparent,
+          border: Border.all(color: AppTheme.mediumGray, width: 1),
+          color: Colors.white,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  label,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.inkBlack,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.0,
-                    fontSize: 11,
-                  ),
-                ),
-                Icon(Icons.arrow_forward, color: AppTheme.inkBlack, size: 12),
-              ],
-            ),
-            const SizedBox(height: 8),
             Text(
-              sub,
+              label,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 17,
+              ),
+            ),
+            Text(
+              hint,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.mutedInk,
-                letterSpacing: 0.5,
-                fontWeight: FontWeight.w500,
+                color: AppTheme.darkGray,
+                fontSize: 12,
               ),
             ),
           ],

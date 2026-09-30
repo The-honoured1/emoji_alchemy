@@ -24,51 +24,45 @@ class CollectionTray extends StatelessWidget {
     });
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppTheme.paperCream,
+      decoration: BoxDecoration(
+        color: AppTheme.lightGray,
         border: Border(
-          top: BorderSide(color: AppTheme.inkBlack, width: 1.5),
+          top: BorderSide(color: AppTheme.inkBlack, width: 1),
         ),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         itemCount: discoveredIds.length,
         itemBuilder: (context, index) {
           final element = ElementData.elements[discoveredIds[index]]!;
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Draggable<String>(
               data: element.id,
               feedback: Material(
                 color: Colors.transparent,
                 child: EmojiBubble(
                   element: element,
-                  size: 72,
-                  highlighted: true,
-                  compactLabel: true,
+                  size: 64,
+                  highlighted: false,
                   showLabel: false,
                 ),
               ),
               childWhenDragging: Opacity(
-                opacity: 0.3,
+                opacity: 0.5,
                 child: EmojiBubble(
                   element: element,
-                  size: 68,
-                  compactLabel: true,
+                  size: 60,
                   showLabel: false,
                 ),
               ),
               child: EmojiBubble(
                 element: element,
-                size: 68,
-                compactLabel: true,
+                size: 60,
                 showLabel: false,
               ),
-            ).animate().fadeIn(
-              delay: Duration(milliseconds: (index % 8) * 40),
-              duration: 200.ms,
             ),
           );
         },

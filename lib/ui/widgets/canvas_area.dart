@@ -334,22 +334,25 @@ class _CanvasAreaState extends State<CanvasArea> with TickerProviderStateMixin {
   }
 }
 
-/// Draws a rice-paper dot grid over the warm cream background.
+/// Draws a minimal grid over the background.
 class _DotGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Fill
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
-      Paint()..color = AppTheme.paperCream,
+      Paint()..color = AppTheme.lightGray,
     );
-    // Dots
-    final dot = Paint()..color = AppTheme.inkBlack.withValues(alpha: 0.08);
-    const spacing = 32.0;
+    // Grid lines (not dots)
+    final line = Paint()
+      ..color = AppTheme.mediumGray
+      ..strokeWidth = 0.5;
+    const spacing = 24.0;
     for (double x = 0; x < size.width; x += spacing) {
-      for (double y = 0; y < size.height; y += spacing) {
-        canvas.drawCircle(Offset(x, y), 1.2, dot);
-      }
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), line);
+    }
+    for (double y = 0; y < size.height; y += spacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), line);
     }
   }
 
