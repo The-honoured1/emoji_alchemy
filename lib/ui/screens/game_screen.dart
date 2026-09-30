@@ -115,7 +115,7 @@ class GameScreen extends StatelessWidget {
   }
 
   void _navigateTo(BuildContext context, int index) {
-    final routeNames = ['/', '/lab', '/codex', '/profile'];
+    final routeNames = ['/', '/lab', '/collection', '/profile'];
     Navigator.of(context).pushReplacementNamed(routeNames[index]);
   }
 }
@@ -191,3 +191,4 @@ class _TopChip extends StatelessWidget {
     );
   }
 }
+

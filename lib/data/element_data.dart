@@ -573,3 +573,4 @@ class ElementData {
     Combination(element1: 'fire',   element2: 'star',    result: 'fireworks'),
   ];
 }
+

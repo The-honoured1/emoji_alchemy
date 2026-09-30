@@ -86,3 +86,4 @@ class EmojiBubble extends StatelessWidget {
     );
   }
 }
+

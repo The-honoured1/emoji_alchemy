@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../providers/game_state.dart';
 import '../../theme/app_theme.dart';
 import '../screens/discovery_screen.dart';
-import 'emoji_bubble.dart';
 
 class DiscoveryOverlay extends StatelessWidget {
   final CombinationOutcome outcome;
@@ -123,3 +121,4 @@ class DiscoveryOverlay extends StatelessWidget {
     );
   }
 }
+

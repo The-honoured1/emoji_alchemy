@@ -359,3 +359,4 @@ class _DotGridPainter extends CustomPainter {
   @override
   bool shouldRepaint(_DotGridPainter oldDelegate) => false;
 }
+

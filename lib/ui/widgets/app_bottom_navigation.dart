@@ -14,9 +14,9 @@ class AppBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppTheme.inkBlack,
-        border: Border(top: BorderSide(color: AppTheme.mediumGray, width: 1)),
+        border: const Border(top: BorderSide(color: AppTheme.mediumGray, width: 1)),
       ),
       child: BottomNavigationBar(
         currentIndex: currentIndex,
@@ -47,3 +47,4 @@ class AppBottomNavigation extends StatelessWidget {
     );
   }
 }
+

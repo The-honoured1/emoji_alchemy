@@ -30,10 +30,11 @@ class EmojiAlchemyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomeScreen(),
         '/lab': (context) => const GameScreen(),
-        '/codex': (context) => const CodexScreen(),
+        '/collection': (context) => const CollectionScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/hints': (context) => const HintScreen(),
       },
     );
   }
 }
+

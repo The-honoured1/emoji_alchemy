@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../providers/game_state.dart';
 import '../../theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
-import 'codex_screen.dart';
+import 'collection_screen.dart';
 import 'game_screen.dart';
 import 'daily_puzzle_screen.dart';
 import 'profile_screen.dart';
@@ -131,7 +130,7 @@ class HomeScreen extends StatelessWidget {
                         label: 'Codex',
                         hint: 'All elements',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const CodexScreen()),
+                          MaterialPageRoute(builder: (_) => const CollectionScreen()),
                         ),
                       ),
                       _ActionButton(
@@ -247,3 +246,4 @@ class _ActionButton extends StatelessWidget {
     );
   }
 }
+

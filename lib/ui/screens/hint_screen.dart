@@ -264,7 +264,7 @@ class _HintRevealSheet extends StatelessWidget {
             children: [
               Text(
                 hint.badge.toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppTheme.accentOrange,
                   letterSpacing: 1.6,
                   fontWeight: FontWeight.w800,
@@ -276,7 +276,7 @@ class _HintRevealSheet extends StatelessWidget {
               Text(
                 hint.title,
                 style: const TextStyle(
-                  color: AppTheme.offWhite,
+                  color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Georgia',
@@ -295,7 +295,7 @@ class _HintRevealSheet extends StatelessWidget {
                 const SizedBox(height: 14),
                 Text(
                   hint.recipe!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppTheme.accentOrange,
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
@@ -330,3 +330,4 @@ class _HintRevealSheet extends StatelessWidget {
     );
   }
 }
+

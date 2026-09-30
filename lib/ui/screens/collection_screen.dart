@@ -6,14 +6,14 @@ import '../../theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
 import '../widgets/emoji_bubble.dart';
 
-class CodexScreen extends StatefulWidget {
-  const CodexScreen({super.key});
+class CollectionScreen extends StatefulWidget {
+  const CollectionScreen({super.key});
 
   @override
-  State<CodexScreen> createState() => _CodexScreenState();
+  State<CollectionScreen> createState() => _CollectionScreenState();
 }
 
-class _CodexScreenState extends State<CodexScreen> {
+class _CollectionScreenState extends State<CollectionScreen> {
   ElementCategory? selectedCategory;
 
   final List<Map<String, dynamic>> _filters = [
@@ -55,14 +55,14 @@ class _CodexScreenState extends State<CodexScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'CODEX',
+              'COLLECTION',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: AppTheme.darkGray,
                 letterSpacing: 2.2,
                 fontWeight: FontWeight.w800,
               ),
             ),
-            Text('All Elements', style: theme.textTheme.titleMedium),
+            Text('Your discoveries', style: theme.textTheme.titleMedium),
           ],
         ),
       ),
@@ -222,3 +222,4 @@ class _CodexScreenState extends State<CodexScreen> {
     Navigator.of(context).pushReplacementNamed(routeNames[index]);
   }
 }
+

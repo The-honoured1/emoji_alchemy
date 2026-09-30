@@ -296,3 +296,4 @@ class _ElementCard extends StatelessWidget {
     );
   }
 }
+
