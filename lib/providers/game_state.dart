@@ -150,8 +150,12 @@ class GameState extends ChangeNotifier {
 
   bool get initialized => _initialized;
 
-  GameState() {
-    _init();
+  GameState();
+
+  /// Initialize GameState with async disk operations.
+  /// Must be called before using GameState in the widget tree.
+  Future<void> initialize() async {
+    await _init();
   }
 
   Future<void> _init() async {
