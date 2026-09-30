@@ -92,6 +92,13 @@ class GameScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppTheme.paperCream,
                     border: Border.all(color: AppTheme.inkBlack, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.inkBlack.withValues(alpha: 0.1),
+                        blurRadius: 0,
+                        offset: const Offset(2, 2),
+                      ),
+                    ],
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: const CanvasArea(),

@@ -68,16 +68,27 @@ class DiscoveryOverlay extends StatelessWidget {
 
               // ── Element name ──────────────────────────────────────────
               Center(
-                child: Text(
-                  outcome.result.name,
-                  style: const TextStyle(
-                    color: AppTheme.paleText,
-                    fontSize: 44,
-                    fontWeight: FontWeight.w900,
-                    fontFamily: 'Georgia',
-                    height: 1.0,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  children: [
+                    Text(
+                      outcome.result.name.toUpperCase(),
+                      style: const TextStyle(
+                        color: AppTheme.paleText,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w900,
+                        fontFamily: 'Georgia',
+                        letterSpacing: 1.2,
+                        height: 1.0,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 2,
+                      width: 40,
+                      color: AppTheme.stampRed,
+                    ),
+                  ],
                 ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.4),
               ),
 

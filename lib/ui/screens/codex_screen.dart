@@ -172,6 +172,13 @@ class _CodexScreenState extends State<CodexScreen> {
                             decoration: BoxDecoration(
                               color: AppTheme.inkBlack,
                               border: Border.all(color: AppTheme.darkHairline, width: 1),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.inkBlack.withValues(alpha: 0.12),
+                                  blurRadius: 0,
+                                  offset: const Offset(1, 1),
+                                ),
+                              ],
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
                             child: Column(
@@ -183,8 +190,8 @@ class _CodexScreenState extends State<CodexScreen> {
                                   element.name.toUpperCase(),
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: AppTheme.paleText.withValues(alpha: 0.75),
-                                    fontSize: 10,
-                                    letterSpacing: 0.6,
+                                    fontSize: 9,
+                                    letterSpacing: 0.8,
                                   ),
                                   textAlign: TextAlign.center,
                                   maxLines: 1,

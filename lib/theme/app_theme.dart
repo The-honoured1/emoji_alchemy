@@ -1,89 +1,87 @@
 import 'package:flutter/material.dart';
 
-/// Ink & Paper — sumi ink on warm cream, editorial weight contrast.
+/// Clean, minimal aesthetic — structured grids and breathing room.
 class AppTheme {
   // ── Palette ──────────────────────────────────────────────────────────────
-  static const Color inkBlack    = Color(0xFF1C1612); // deep sumi ink
-  static const Color inkSoft     = Color(0xFF2E2720); // slightly lifted dark
-  static const Color paperCream  = Color(0xFFF5F0E8); // main background
-  static const Color paperWarm   = Color(0xFFEADFC8); // slightly toasted
-  static const Color stampRed    = Color(0xFFB85C2C); // red seal / accent
-  static const Color sepiaGold   = Color(0xFF8B6914); // gold label accent
-  static const Color hairline    = Color(0xFFC0A882); // borders on light
-  static const Color darkHairline= Color(0xFF3D3228); // borders on dark
-  static const Color paleText    = Color(0xFFEDE5D4); // text on dark surfaces
-  static const Color mutedInk    = Color(0xFF7A6A58); // secondary on light
+  static const Color inkBlack    = Color(0xFF0F0F0F); // near-black, no warmth
+  static const Color offWhite    = Color(0xFFFAFAFA); // cool white
+  static const Color lightGray   = Color(0xFFF0F0F0); // grid background
+  static const Color mediumGray  = Color(0xFFE0E0E0); // borders
+  static const Color darkGray    = Color(0xFF707070); // secondary text
+  static const Color accentOrange = Color(0xFFE8694B); // warm, single accent
+  static const Color paleText    = Color(0xFFE8E8E8); // text on dark
 
   static ThemeData get inkPaperTheme {
     return ThemeData(
       brightness: Brightness.light,
       primaryColor: inkBlack,
-      scaffoldBackgroundColor: paperCream,
+      scaffoldBackgroundColor: offWhite,
       cardColor: inkBlack,
-      canvasColor: paperWarm,
-      dividerColor: hairline,
-      highlightColor: stampRed,
-      splashColor: stampRed.withValues(alpha: 0.14),
-      shadowColor: inkBlack.withValues(alpha: 0.35),
-      fontFamily: 'Georgia',
+      canvasColor: lightGray,
+      dividerColor: mediumGray,
+      highlightColor: accentOrange,
+      splashColor: accentOrange.withValues(alpha: 0.08),
+      shadowColor: Colors.transparent, // NO glows
+      fontFamily: 'system',
+      useMaterial3: false,
       appBarTheme: const AppBarTheme(
-        backgroundColor: paperCream,
+        backgroundColor: offWhite,
         foregroundColor: inkBlack,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
           color: inkBlack,
-          fontFamily: 'Georgia',
-          letterSpacing: 0.3,
+          fontFamily: 'system',
+          letterSpacing: 0,
         ),
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
-          fontSize: 38,
-          fontWeight: FontWeight.w800,
+          fontSize: 48,
+          fontWeight: FontWeight.w700,
           color: inkBlack,
-          letterSpacing: -0.5,
-          fontFamily: 'Georgia',
-          height: 1.0,
+          letterSpacing: -1,
+          fontFamily: 'system',
+          height: 1.1,
         ),
         titleLarge: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w700,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
           color: inkBlack,
-          fontFamily: 'Georgia',
+          fontFamily: 'system',
         ),
         titleMedium: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.w700,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
           color: inkBlack,
-          fontFamily: 'Georgia',
+          fontFamily: 'system',
         ),
         bodyMedium: TextStyle(
-          fontSize: 15,
+          fontSize: 14,
           color: inkBlack,
-          fontFamily: 'Georgia',
-          height: 1.5,
+          fontFamily: 'system',
+          height: 1.6,
         ),
         bodySmall: TextStyle(
           fontSize: 12,
-          color: mutedInk,
-          fontFamily: 'Georgia',
-          letterSpacing: 0.8,
+          color: darkGray,
+          fontFamily: 'system',
+          letterSpacing: 0,
         ),
         labelLarge: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          color: stampRed,
-          fontFamily: 'Georgia',
-          letterSpacing: 1.4,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: accentOrange,
+          fontFamily: 'system',
+          letterSpacing: 0.5,
         ),
       ),
       colorScheme: const ColorScheme.light(
         primary: inkBlack,
-        secondary: stampRed,
-        surface: paperCream,
+        secondary: accentOrange,
+        surface: offWhite,
         onPrimary: paleText,
         onSecondary: Colors.white,
         onSurface: inkBlack,

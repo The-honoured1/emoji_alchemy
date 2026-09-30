@@ -55,7 +55,10 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 28),
 
                   // ── Daily card ───────────────────────────────────────────
-                  _DailyCard(accent: AppTheme.stampRed, theme: theme, context: context),
+                  _DailyCard(accent: AppTheme.stampRed, theme: theme, context: context)
+                      .animate()
+                      .fadeIn(duration: 600.ms)
+                      .slideY(begin: 0.2, duration: 600.ms, curve: Curves.easeOut),
 
                   const SizedBox(height: 20),
 
@@ -199,18 +202,35 @@ class _DailyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const GameScreen()),
+        MaterialPageRoute(builder: (_) => const DailyPuzzleScreen()),
       ),
       child: Container(
-        decoration: const BoxDecoration(color: AppTheme.inkBlack),
+        decoration: BoxDecoration(
+          color: AppTheme.inkBlack,
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.stampRed.withValues(alpha: 0.3),
+              blurRadius: 0,
+              offset: const Offset(6, 6),
+            ),
+          ],
+        ),
         child: Stack(
           children: [
-            // Decorative side stamp line
+            // Decorative corner accent
             Positioned(
-              left: 0,
-              top: 0,
+              right: 0,
               bottom: 0,
-              child: Container(width: 5, color: AppTheme.stampRed),
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: AppTheme.stampRed, width: 3),
+                    left: BorderSide(color: AppTheme.stampRed, width: 3),
+                  ),
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 22, 22, 22),
@@ -220,57 +240,74 @@ class _DailyCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'TODAY · DAY 142',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppTheme.paleText.withValues(alpha: 0.55),
-                          letterSpacing: 1.8,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'TODAY',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: AppTheme.paleText.withValues(alpha: 0.5),
+                              letterSpacing: 2.2,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Daily Trial',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              color: AppTheme.paleText,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          border: Border.all(color: AppTheme.stampRed, width: 1.2),
+                          border: Border.all(color: AppTheme.stampRed, width: 2),
+                          color: AppTheme.stampRed.withValues(alpha: 0.1),
                         ),
                         child: Text(
-                          '3 HINTS',
+                          '✨ NEW',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: AppTheme.stampRed,
-                            letterSpacing: 1.4,
-                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.6,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 16),
                   Text(
-                    'Steam Engine Run',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: AppTheme.paleText,
-                      fontSize: 26,
+                    'A fresh challenge awaits each sunrise. Discover new elements through guided synthesis.',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppTheme.paleText.withValues(alpha: 0.65),
+                      fontSize: 12,
+                      height: 1.6,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Reach 🔥 + 💧 in 6 steps',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.paleText.withValues(alpha: 0.6),
-                    ),
-                  ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.centerRight,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                       color: AppTheme.stampRed,
-                      child: Text(
-                        'START →',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.6,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'BEGIN',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.4,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward, color: Colors.white, size: 14),
+                        ],
                       ),
                     ),
                   ),
@@ -297,27 +334,36 @@ class _ActionTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
+        padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 18),
         decoration: BoxDecoration(
           border: Border.all(color: AppTheme.inkBlack, width: 1.5),
+          color: Colors.transparent,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              label,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: AppTheme.inkBlack,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.8,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  label,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppTheme.inkBlack,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.0,
+                    fontSize: 11,
+                  ),
+                ),
+                Icon(Icons.arrow_forward, color: AppTheme.inkBlack, size: 12),
+              ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               sub,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: AppTheme.mutedInk,
-                letterSpacing: 0.4,
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
