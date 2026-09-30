@@ -6,6 +6,8 @@ build/
 # Android
 android/.gradle/
 android/app/build/
+android/*.iml
+android/local.properties
 
 # iOS
 ios/Pods/
@@ -15,4 +17,3 @@ ios/Flutter/Flutter.podspec
 
 # Godot 4+ specific ignores
 .godot/
-/android/
