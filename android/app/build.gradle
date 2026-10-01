@@ -7,8 +7,12 @@ if (localPropertiesFile.exists()) {
 }
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+if (flutterRoot == null || flutterRoot.trim().isEmpty()) {
+    flutterRoot = System.getenv('FLUTTER_ROOT')
+}
+
+if (flutterRoot == null || flutterRoot.trim().isEmpty()) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file or set FLUTTER_ROOT.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -38,6 +42,9 @@ android {
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
     }
 
     buildTypes {
